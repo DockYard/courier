@@ -30,6 +30,7 @@ defmodule McFeely.Mixfile do
     [{:phoenix, "~> 1.1"},
      {:phoenix_html, "~> 2.2"},
      {:gen_smtp, "0.9.0"},
-     {:mock, "0.1.1", only: :test}]
+     {:mock, "0.1.1", only: :test},
+     {:mail, git: "https://github.com/dockyard/elixir-mail"}]
   end
 end

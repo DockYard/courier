@@ -4,12 +4,12 @@ defmodule McFeely.Test.LoggerTest do
   import ExUnit.CaptureIO
 
   test "will output the message via the Logger defaulting to :info level" do
-    message = %McFeely.Message{
-      subject: "Let's go up the hill!",
-      to: "jack@example.com",
-      from: "jill@example.com",
-      body: "To fetch a pail of water!"
-    }
+    message =
+      Mail.build()
+      |> Mail.put_subject("Let's go up the hill!")
+      |> Mail.put_to("jack@example.com")
+      |> Mail.put_from("jill@example.com")
+      |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:info, fn ->
       McFeely.Adapters.Logger.deliver(message, %{})
@@ -23,12 +23,12 @@ defmodule McFeely.Test.LoggerTest do
   end
 
   test "will output the message to level :debug when specified in config" do
-    message = %McFeely.Message{
-      subject: "Let's go up the hill!",
-      to: "jack@example.com",
-      from: "jill@example.com",
-      body: "To fetch a pail of water!"
-    }
+    message =
+      Mail.build()
+      |> Mail.put_subject("Let's go up the hill!")
+      |> Mail.put_to("jack@example.com")
+      |> Mail.put_from("jill@example.com")
+      |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:debug, fn ->
       McFeely.Adapters.Logger.deliver(message, %{level: :debug})

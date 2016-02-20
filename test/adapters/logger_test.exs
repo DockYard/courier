@@ -1,4 +1,4 @@
-defmodule McFeely.Test.LoggerTest do
+defmodule Courier.Test.LoggerTest do
   use ExUnit.Case
   require Logger
   import ExUnit.CaptureIO
@@ -12,7 +12,7 @@ defmodule McFeely.Test.LoggerTest do
       |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:info, fn ->
-      McFeely.Adapters.Logger.deliver(message, %{})
+      Courier.Adapters.Logger.deliver(message, %{})
     end)
 
     assert output =~ "Subject: Let's go up the hill!"
@@ -31,7 +31,7 @@ defmodule McFeely.Test.LoggerTest do
       |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:debug, fn ->
-      McFeely.Adapters.Logger.deliver(message, %{level: :debug})
+      Courier.Adapters.Logger.deliver(message, %{level: :debug})
     end)
 
     assert output =~ "Subject: Let's go up the hill!"

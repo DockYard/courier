@@ -1,8 +1,8 @@
-defmodule McFeely.Mixfile do
+defmodule Courier.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :mc_feely,
+    [app: :courier,
      version: "0.0.1",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,

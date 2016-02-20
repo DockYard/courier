@@ -1,4 +1,4 @@
-defmodule McFeely.Parsers.Logger do
+defmodule Courier.Parsers.Logger do
   @doc """
   Will parse the Logger rendering.
 

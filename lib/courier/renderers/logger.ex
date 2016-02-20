@@ -1,4 +1,4 @@
-defmodule McFeely.Renderers.Logger do
+defmodule Courier.Renderers.Logger do
   import Mail.Renderers.RFC2822, only: [render_headers: 1]
 
   def render(%Mail.Message{multipart: true} = message) do

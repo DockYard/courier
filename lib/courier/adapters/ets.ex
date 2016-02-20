@@ -1,5 +1,5 @@
-defmodule McFeely.Adapters.ETS do
-  def table_name, do: :mcfeely_ets_table
+defmodule Courier.Adapters.ETS do
+  def table_name, do: :courier_ets_table
 
   def new_table do
     :ets.new(table_name(), [:named_table, :public])

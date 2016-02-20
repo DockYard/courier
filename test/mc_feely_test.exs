@@ -4,13 +4,15 @@ defmodule McFeely.Test do
   import Mock
 
   defmodule TestAdapter do
-    def deliver(%McFeely.Message{}=_message, %{}=_config), do: nil
+    def deliver(%Mail.Message{} = _message, %{} = _config),
+      do: nil
   end
 
   defmodule TestView do
     use McFeely.View, root: "test/fixtures/templates"
 
-    def upcase(message), do: String.upcase(message)
+    def upcase(message),
+      do: String.upcase(message)
   end
 
   Application.put_env(:test, McFeely.Test.MyMailer, %{
@@ -25,22 +27,11 @@ defmodule McFeely.Test do
     assert MyMailer.__adapter__ == TestAdapter
   end
 
-  test "composing a message" do
-    assigns = [foo: "bar", to: "<First User> first@example.com", from: "<Second User> second@example.com", subject: "Test Email"]
-    message = MyMailer.compose(TestView, "foobar.html", assigns)
-
-    assert %McFeely.Message{} = message
-    assert message[:to] == assigns[:to]
-    assert message[:from] == assigns[:from]
-    assert message[:subject] == assigns[:subject]
-    assert message[:body] == "BAR Test Email\n"
-  end
-
   test "delivering a message delegates to the adapter" do
     with_mock McFeely.Test.TestAdapter, [deliver: fn(_message, _config) -> "delivered" end] do
-      McFeely.Test.MyMailer.deliver(%McFeely.Message{})
+      McFeely.Test.MyMailer.deliver(%Mail.Message{})
 
-      assert called McFeely.Test.TestAdapter.deliver(%McFeely.Message{}, %{adapter: McFeely.Test.TestAdapter})
+      assert called McFeely.Test.TestAdapter.deliver(%Mail.Message{}, %{adapter: McFeely.Test.TestAdapter})
     end
   end
 end

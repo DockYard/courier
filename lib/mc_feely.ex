@@ -8,8 +8,10 @@ defmodule McFeely do
       @adapter adapter
       @config config
 
-      def deliver(%McFeely.Message{}=message), do: __adapter__.deliver(message, @config)
-      def __adapter__, do: @adapter
+      def deliver(%Mail.Message{} = message),
+        do: __adapter__.deliver(message, @config)
+      def __adapter__(),
+        do: @adapter
 
       def compose(view, template, assigns \\ []) do
         body = Phoenix.View.render_to_string(view, template, assigns)

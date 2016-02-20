@@ -1,9 +1,9 @@
-defmodule McFeely do
+defmodule Courier do
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
-      {otp_app, adapter, config} = McFeely.parse_config(__MODULE__, opts)
+      {otp_app, adapter, config} = Courier.parse_config(__MODULE__, opts)
 
-      import McFeely
+      import Courier
       @opt_app otp_app
       @adapter adapter
       @config config
@@ -17,7 +17,7 @@ defmodule McFeely do
         body = Phoenix.View.render_to_string(view, template, assigns)
 
         List.insert_at(assigns, -1, {:body, body})
-        |> McFeely.Message.build()
+        |> Courier.Message.build()
       end
     end
   end

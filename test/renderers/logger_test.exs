@@ -1,4 +1,4 @@
-defmodule McFeely.Renderers.LoggerTest do
+defmodule Courier.Renderers.LoggerTest do
   use ExUnit.Case
 
   test "rendering a singlepart message" do
@@ -8,8 +8,8 @@ defmodule McFeely.Renderers.LoggerTest do
       |> Mail.put_text("This is a test")
 
     result =
-      McFeely.Renderers.Logger.render(message)
-      |> McFeely.Parsers.Logger.parse()
+      Courier.Renderers.Logger.render(message)
+      |> Courier.Parsers.Logger.parse()
 
     refute result.multipart
     assert result.headers.subject == "Test"
@@ -24,8 +24,8 @@ defmodule McFeely.Renderers.LoggerTest do
       |> Mail.put_html("<h1>Some HTML</h1>")
 
     result =
-      McFeely.Renderers.Logger.render(message)
-      |> McFeely.Parsers.Logger.parse()
+      Courier.Renderers.Logger.render(message)
+      |> Courier.Parsers.Logger.parse()
 
     assert result.multipart
     assert result.headers.subject == "Test"
@@ -41,7 +41,7 @@ defmodule McFeely.Renderers.LoggerTest do
       Mail.build()
       |> Mail.put_attachment("README.md")
 
-    result = McFeely.Renderers.Logger.render(message)
+    result = Courier.Renderers.Logger.render(message)
 
     encoded_file =
       File.read!("README.md")

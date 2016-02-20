@@ -1,4 +1,4 @@
-defmodule McFeely.View do
+defmodule Courier.View do
   defmacro __using__(opts) do
     quote do
       import Phoenix.View

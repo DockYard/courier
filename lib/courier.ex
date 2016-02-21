@@ -1,4 +1,13 @@
 defmodule Courier do
+  @moduledoc """
+  This module is `use`ed by your custom mailer.
+
+  ## Example:
+
+      defmodule MyApp.Mailer do
+        use Courier, otp_app: :my_app
+      end
+  """
   defmacro __using__(opts) do
     quote bind_quoted: [opts: opts] do
       {otp_app, adapter, config} = Courier.parse_config(__MODULE__, opts)
@@ -12,13 +21,6 @@ defmodule Courier do
         do: __adapter__.deliver(message, @config)
       def __adapter__(),
         do: @adapter
-
-      def compose(view, template, assigns \\ []) do
-        body = Phoenix.View.render_to_string(view, template, assigns)
-
-        List.insert_at(assigns, -1, {:body, body})
-        |> Courier.Message.build()
-      end
     end
   end
 

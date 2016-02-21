@@ -1,4 +1,10 @@
 defmodule Courier.Renderers.Logger do
+  @moduledoc """
+  Renderer for the Logger adapter
+
+  Makes use of `Mail.Renderers.RFC2822` with the exception that multipart messgaes that are meant to be
+  `multipart/mixed` will render as flat. Also, attachment parts encoded data will render as `[File content]`
+  """
   import Mail.Renderers.RFC2822, only: [render_headers: 1]
 
   def render(%Mail.Message{multipart: true} = message) do

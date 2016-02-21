@@ -17,7 +17,7 @@ defmodule Courier.Renderers.Logger do
   end
 
   def render_part(%Mail.Message{} = message) do
-    "#{render_headers(message.headers)}\n\n#{render_body(message)}"
+    "#{render_headers(message.headers)}\r\n\r\n#{render_body(message)}"
   end
 
   defp render_body(%Mail.Message{} = message) do

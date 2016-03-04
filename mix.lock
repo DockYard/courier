@@ -1,5 +1,5 @@
 %{"gen_smtp": {:hex, :gen_smtp, "0.9.0"},
-  "mail": {:git, "https://github.com/dockyard/elixir-mail", "ae11204d34ce7eb4f8103c952c9af14002705f2b", []},
+  "mail": {:git, "https://github.com/dockyard/elixir-mail", "6822c57c5b232c66e12d81d09564eaab202ec06d", []},
   "meck": {:hex, :meck, "0.8.3"},
   "mock": {:hex, :mock, "0.1.1"},
   "phoenix": {:hex, :phoenix, "1.1.4"},

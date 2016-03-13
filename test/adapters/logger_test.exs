@@ -1,4 +1,4 @@
-defmodule Courier.Test.LoggerTest do
+defmodule Courier.Adapters.LoggerTest do
   use ExUnit.Case
   require Logger
   import ExUnit.CaptureIO

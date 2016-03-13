@@ -1,5 +1,3 @@
-defmodule Courier.Adapter.Test do
-  def deliver(%Mail.Message{}=message, config) do
-    
-  end
+defmodule Courier.Adapters.Test do
+  use Courier.Adapters.ETS, table: :courier_test_adapter
 end

@@ -7,6 +7,8 @@ defmodule Courier.Mixfile do
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
+     docs: [main: "Courier"],
+     package: package(),
      deps: deps]
   end
 
@@ -15,6 +17,13 @@ defmodule Courier.Mixfile do
   # Type `mix help compile.app` for more information
   def application do
     [applications: [:logger, :phoenix, :gen_smtp]]
+  end
+
+  def package do
+    [maintainers: ["Brian Cardarella"],
+     licenses: ["MIT"],
+     links: %{"GitHub" => "https://github.com/DockYard/courier"}
+     ]
   end
 
   # Dependencies can be Hex packages:
@@ -31,6 +40,8 @@ defmodule Courier.Mixfile do
      {:phoenix_html, "~> 2.2"},
      {:gen_smtp, "0.9.0"},
      {:mock, "0.1.1", only: :test},
+     {:earmark, "~> 0.1", only: :dev},
+     {:ex_doc, "~> 0.11", only: :dev},
      {:mail, git: "https://github.com/dockyard/elixir-mail"}]
   end
 end

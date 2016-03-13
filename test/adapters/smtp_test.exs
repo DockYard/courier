@@ -1,4 +1,4 @@
-defmodule Courier.Adapter.SMTPTest do
+defmodule Courier.Adapters.SMTPTest do
   use ExUnit.Case
 
   setup_all do
@@ -7,12 +7,15 @@ defmodule Courier.Adapter.SMTPTest do
     on_exit fn ->
       Process.exit(pid, :kill)
     end
+
+    :ok
   end
 
   test "will properly send a message" do
     message =
       Mail.build()
       |> Mail.put_to("to@example.com")
+      |> Mail.put_bcc("other@example.com")
       |> Mail.put_from("from@example.com")
       |> Mail.put_subject("Sending you a test")
       |> Mail.put_text("Hopefully it works!")

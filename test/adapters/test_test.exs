@@ -75,7 +75,7 @@ defmodule Courier.Adapters.TestTest do
     Courier.Adapters.Test.deliver(@message2, %{})
 
     assert length(Courier.Adapters.Test.messages()) == 2
-    
+
     Courier.Adapters.Test.delete(@message1)
 
     messages = Courier.Adapters.Test.messages()

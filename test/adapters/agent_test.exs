@@ -79,7 +79,7 @@ defmodule Courier.Adapters.AgentTest do
     MockAdapter.deliver(@message2, %{})
 
     assert length(MockAdapter.messages()) == 2
-    
+
     MockAdapter.delete(@message1)
 
     messages = MockAdapter.messages()

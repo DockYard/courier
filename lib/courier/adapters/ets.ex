@@ -48,6 +48,12 @@ defmodule Courier.Adapters.ETS do
   Clears all messages
   """)
 
+  Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:delete, 1}, (quote do: [message]), """
+  Deletes the specific message
+
+  Returns the list of remaning messages.
+  """ )
+
   defmacro __using__([]),
     do: raise """
     No table name was given. Must be used in the form:
@@ -78,9 +84,12 @@ defmodule Courier.Adapters.ETS do
         end
       end
 
-
       def clear(),
         do: :ets.delete(unquote(table_name), :messages)
+
+      def delete(message) do
+        :ets.insert(unquote(table_name), {:messages, List.delete(messages(), message)})
+      end
     end
   end
 end

@@ -69,4 +69,17 @@ defmodule Courier.Adapters.TestTest do
 
     assert length(Courier.Adapters.Test.messages()) == 0
   end
+
+  test "deleting an email" do
+    Courier.Adapters.Test.deliver(@message1, %{})
+    Courier.Adapters.Test.deliver(@message2, %{})
+
+    assert length(Courier.Adapters.Test.messages()) == 2
+    
+    Courier.Adapters.Test.delete(@message1)
+
+    messages = Courier.Adapters.Test.messages()
+    assert length(messages) == 1
+    assert messages == [@message2]
+  end
 end

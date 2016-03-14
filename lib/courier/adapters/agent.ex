@@ -47,6 +47,13 @@ defmodule Courier.Adapters.Agent do
   Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:clear, 0}, (quote do: []), """
   Clears all messages
   """)
+
+  Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:delete, 1}, (quote do: [message]), """
+  Deletes the specific message
+
+  Returns the list of remaning messages.
+  """ )
+
   defmacro __using__([]) do
     quote do
       use Courier.Storage
@@ -66,6 +73,10 @@ defmodule Courier.Adapters.Agent do
 
       def clear(),
         do: Agent.update(__MODULE__, fn(_) -> [] end)
+
+      def delete(message) do
+        Agent.update(__MODULE__, fn(messages) -> List.delete(messages, message) end)
+      end
     end
   end
 end

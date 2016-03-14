@@ -73,4 +73,17 @@ defmodule Courier.Adapters.AgentTest do
 
     assert length(MockAdapter.messages()) == 0
   end
+
+  test "deleting an email" do
+    MockAdapter.deliver(@message1, %{})
+    MockAdapter.deliver(@message2, %{})
+
+    assert length(MockAdapter.messages()) == 2
+    
+    MockAdapter.delete(@message1)
+
+    messages = MockAdapter.messages()
+    assert length(messages) == 1
+    assert messages == [@message2]
+  end
 end

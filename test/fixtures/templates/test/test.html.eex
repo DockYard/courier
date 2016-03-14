@@ -1,0 +1,1 @@
+<span><%= upcase @foo %> <%= @bar %></span>

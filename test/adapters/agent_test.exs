@@ -24,7 +24,7 @@ defmodule Courier.Adapters.AgentTest do
 
   @message3 Mail.build()
             |> Mail.put_subject("Let's Dance!")
-            |> Mail.put_to(["jack@example.com", "spider@example.com"])
+            |> Mail.put_to([{"Jack", "jack@example.com"}, "spider@example.com"])
             |> Mail.put_from("jill@example.com")
             |> Mail.put_text("To annoy the adults!")
 

@@ -56,8 +56,8 @@ defmodule Courier.Adapters.ETS do
     """
   defmacro __using__([table: table_name]) do
     quote do
+      use Courier.Storage
       @behaviour Courier.Adapter
-      @behaviour Courier.Storage
 
       def init(_) do
         :ets.new(unquote(table_name), [:named_table, :public])
@@ -78,15 +78,6 @@ defmodule Courier.Adapters.ETS do
         end
       end
 
-      def messages_for(recipient) do
-        Enum.filter messages(),
-          &(Enum.member?(Mail.all_recipients(&1), recipient))
-      end
-
-      def recipients do
-        Enum.reduce(messages(), [], &(Mail.all_recipients(&1) ++ &2))
-        |> Enum.uniq()
-      end
 
       def clear(),
         do: :ets.delete(unquote(table_name), :messages)

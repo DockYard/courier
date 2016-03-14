@@ -4,12 +4,13 @@ defmodule Courier.Test do
   import Mock
 
   defmodule TestAdapter do
-    def deliver(%Mail.Message{} = _message, %{} = _config),
-      do: nil
+    def init(_), do: nil
+    def deliver(%Mail.Message{} = _message, %{} = _config), do: nil
   end
 
-  defmodule TestView do
-    use Courier.View, root: "test/fixtures/templates"
+  defmodule View do
+    use Phoenix.View, root: "test/fixtures/templates"
+    use Phoenix.HTML
 
     def upcase(message),
       do: String.upcase(message)
@@ -33,5 +34,23 @@ defmodule Courier.Test do
 
       assert called Courier.Test.TestAdapter.deliver(%Mail.Message{}, %{adapter: Courier.Test.TestAdapter})
     end
+  end
+
+  test "rendering text from a view into a message" do
+    mail =
+      Mail.build_multipart()
+      |> Courier.render(View, "test.txt", %{foo: "foo", bar: "Test"})
+
+    text_part = Mail.get_text(mail)
+    assert text_part.body == "FOO Test\n"
+  end
+
+  test "rendering html from a view into a message" do
+    mail =
+      Mail.build_multipart()
+      |> Courier.render(View, "test.html", %{foo: "foo", bar: "Test"})
+
+    html_part = Mail.get_html(mail)
+    assert html_part.body == "<span>FOO Test</span>\n"
   end
 end

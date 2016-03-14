@@ -45,6 +45,28 @@ MyApp.Mailer.deliver(message)
 
 Courier will deliver the message through the adapter that is configured.
 
+## Rendering with Phoenix Views
+
+If you'd like to render the `text` or `html` parts with a Phoenix view
+you should use `Courier.render/4`
+
+```
+message =
+  Mail.build_multipart()
+  |> Mail.put_to("friend@example.com")
+  |> Mail.put_from("me@example.com")
+  |> Mail.put_subject("How are things?")
+  |> Courier.render(MyApp.MailerView, "check_in.txt", user: user)
+  |> Courier.render(MyApp.MailerView, "check_in.html", user: user)
+
+MyApp.Mailer.deliver(message)
+```
+
+`Courier.render/4` will parse the template path to determine the
+expected `content-type`. For example, if your template is `foobar.html`
+the assumed `content-type` is `text/html` and Courier will render the
+template to a string and use `Mail.put_html(message, rendered_template)`
+
 ## Adapters
 
 Courier comes with some built-in adapters

@@ -49,8 +49,8 @@ defmodule Courier.Adapters.Agent do
   """)
   defmacro __using__([]) do
     quote do
+      use Courier.Storage
       @behaviour Courier.Adapter
-      @behaviour Courier.Storage
 
       def init(_) do
         Agent.start_link(fn -> [] end, name: __MODULE__)
@@ -62,16 +62,6 @@ defmodule Courier.Adapters.Agent do
 
       def messages() do
         Agent.get(__MODULE__, fn(messages) -> messages end)
-      end
-
-      def messages_for(recipient) do
-        Enum.filter messages(),
-          &(Enum.member?(Mail.all_recipients(&1), recipient))
-      end
-
-      def recipients do
-        Enum.reduce(messages(), [], &(Mail.all_recipients(&1) ++ &2))
-        |> Enum.uniq()
       end
 
       def clear(),

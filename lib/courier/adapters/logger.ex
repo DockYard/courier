@@ -5,6 +5,12 @@ defmodule Courier.Adapters.Logger do
 
   @moduledoc """
   Logger adapter
+
+  Will write deliver all messages to the `Logger`. All attachment encoded data will 
+  rener as `[File content]`
+
+  Options:
+  - `level` the `Logger` level to send the message to (defaults to `:info`)
   """
 
   @doc false

@@ -13,6 +13,7 @@ defmodule Courier.Storage do
   @callback messages_for(String.t) :: [Mail.Message.t]
   @callback recipients() :: [String.t]
   @callback clear() :: any
+  @callback delete(Mail.Message.t) :: [Mail.Message.t]
 
   defmacro __using__([]) do
     quote do

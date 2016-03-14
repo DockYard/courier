@@ -51,7 +51,7 @@ defmodule Courier do
 
   `Courier` will use `Mail.put_html/2` once it has rendered the template.
   """
-  def render(%Mail.Message{} = message, view, template, assigns = %{}) do
+  def render(%Mail.Message{} = message, view, template, assigns \\ []) do
     body =
       view.render(template, assigns)
       |> case do

@@ -8,6 +8,7 @@ defmodule Courier.Mixfile do
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
      docs: [main: "Courier"],
+     description: description(),
      package: package(),
      deps: deps]
   end
@@ -18,6 +19,8 @@ defmodule Courier.Mixfile do
   def application do
     [applications: [:logger, :phoenix, :gen_smtp]]
   end
+
+  def description, do: "Adapter based email delivery"
 
   def package do
     [maintainers: ["Brian Cardarella"],
@@ -42,6 +45,6 @@ defmodule Courier.Mixfile do
      {:mock, "0.1.1", only: :test},
      {:earmark, "~> 0.1", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
-     {:mail, git: "https://github.com/dockyard/elixir-mail"}]
+     {:mail, "~> 0.0.3"}]
   end
 end

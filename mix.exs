@@ -39,8 +39,8 @@ defmodule Courier.Mixfile do
   #
   # Type `mix help deps` for more examples and options
   defp deps do
-    [{:phoenix, "~> 1.1"},
-     {:phoenix_html, "~> 2.2"},
+    [{:phoenix, "~> 1.1", only: :test},
+     {:phoenix_html, "~> 2.2", only: :test},
      {:gen_smtp, "0.9.0"},
      {:mock, "0.1.1", only: :test},
      {:earmark, "~> 0.1", only: :dev},

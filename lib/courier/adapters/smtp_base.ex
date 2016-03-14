@@ -28,7 +28,10 @@ defmodule Courier.Adapters.SMTPBase do
       end
 
       defp from(message) do
-        message.headers.from
+        case message.headers.from do
+          {name, email} -> email
+          email -> email
+        end
       end
 
       defp to(message) do

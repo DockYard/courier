@@ -10,7 +10,7 @@ defmodule Courier.Adapters.Agent do
       end
   """
 
-  Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:deliver, 2}, (quote do: [message, config]), """
+  Module.add_doc(__MODULE__, __ENV__.line + 1, :def, {:deliver, 2}, (quote do: [message, opts]), """
   Delivers the message by storing in an Agent
   """)
 
@@ -63,7 +63,7 @@ defmodule Courier.Adapters.Agent do
         Agent.start_link(fn -> [] end, name: __MODULE__)
       end
 
-      def deliver(%Mail.Message{} = message, _config) do
+      def deliver(%Mail.Message{} = message, _opts) do
         Agent.update(__MODULE__, fn(messages) -> [message | messages] end)
       end
 
@@ -77,6 +77,8 @@ defmodule Courier.Adapters.Agent do
       def delete(message) do
         Agent.update(__MODULE__, fn(messages) -> List.delete(messages, message) end)
       end
+
+      defoverridable [init: 1, deliver: 2, messages: 0, clear: 0, delete: 1]
     end
   end
 end

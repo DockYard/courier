@@ -22,8 +22,8 @@ defmodule Courier.Adapters.Logger do
   Based upon the `level` set in the application configuration. Otherwise
   defaults to `:info`. Uses `Courier.Renderers.Logger` to render the message.
   """
-  def deliver(%Mail.Message{} = message, config) do
+  def deliver(%Mail.Message{} = message, opts) do
     rendered_message = Mail.render(message, Courier.Renderers.Logger)
-    Logger.log(config[:level] || :info, rendered_message)
+    Logger.log(opts[:level] || :info, rendered_message)
   end
 end

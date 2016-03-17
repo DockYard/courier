@@ -1,11 +1,24 @@
 defmodule Courier.Test do
   use ExUnit.Case
 
-  import Mock
+  defmodule DeliverySuccess do
+    defexception message: "Delivered!"
+  end
 
   defmodule TestAdapter do
     def init(_), do: nil
-    def deliver(%Mail.Message{} = _message, %{} = _config), do: nil
+    def deliver(%Mail.Message{} = _message, _opts) do
+      raise DeliverySuccess
+    end
+  end
+
+  defmodule OptionTestAdapter do
+    def init(_), do: nil
+    def deliver(%Mail.Message{} = _message, opts) do
+      if opts[:success] do
+        raise DeliverySuccess
+      end
+    end
   end
 
   defmodule View do
@@ -24,15 +37,28 @@ defmodule Courier.Test do
     use Courier, otp_app: :test
   end
 
+  Application.put_env(:test, Courier.Test.MyOptionMailer, %{
+    adapter: OptionTestAdapter,
+    success: false
+  })
+
+  defmodule MyOptionMailer do
+    use Courier, otp_app: :test
+  end
+
   test "Using Courier: parsing config" do
     assert MyMailer.__adapter__ == TestAdapter
   end
 
   test "delivering a message delegates to the adapter" do
-    with_mock Courier.Test.TestAdapter, [deliver: fn(_message, _config) -> "delivered" end] do
-      Courier.Test.MyMailer.deliver(%Mail.Message{})
+    assert_raise DeliverySuccess, fn ->
+      MyMailer.deliver(Mail.build())
+    end
+  end
 
-      assert called Courier.Test.TestAdapter.deliver(%Mail.Message{}, %{adapter: Courier.Test.TestAdapter})
+  test "delivering a message with options will override the inherited options from config" do
+    assert_raise DeliverySuccess, fn ->
+      MyOptionMailer.deliver(Mail.build(), success: true)
     end
   end
 

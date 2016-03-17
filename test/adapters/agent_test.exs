@@ -5,8 +5,15 @@ defmodule Courier.Adapters.AgentTest do
     use Courier.Adapters.Agent
   end
 
-  setup do
+  setup_all do
     MockAdapter.init([])
+
+    :ok
+  end
+
+  setup do
+    MockAdapter.clear()
+
     :ok
   end
 

@@ -1,4 +1,5 @@
 defmodule Courier do
+  use GenServer
   @moduledoc """
   This module is `use`ed by your custom mailer.
 
@@ -11,20 +12,33 @@ defmodule Courier do
   defmacro __using__(opts) do
     {_otp_app, adapter, config} = parse_config(__CALLER__.module, opts)
 
-    # adapter.init(config)
-
     quote do
       use Supervisor
       import Courier
 
-      # def start_link do
-        # Supervisor.start_link(unquote(Macro.escpae(adapter)), :ok)
-      # end
-      def deliver(%Mail.Message{} = message),
-        do: __adapter__.deliver(message, unquote(Macro.escape(config)))
+      def start_link() do
+        unquote(__MODULE__).start_link(__MODULE__, unquote(Macro.escape(config)))
+      end
+
+      def deliver(%Mail.Message{} = message, opts \\ []) do
+        config =
+          unquote(Macro.escape(config))
+        opts = Enum.into(opts, %{}, fn(t) -> t end)
+        opts = Map.merge(config, opts)
+        __adapter__.deliver(message, opts)
+      end
       def __adapter__(),
         do: unquote(Macro.escape(adapter))
     end
+  end
+
+  def start_link(mailer, config) do
+    GenServer.start_link(__MODULE__, [mailer, config])
+  end
+
+  def init([mailer, config]) do
+    _ = mailer.__adapter__.init(config)
+    {:ok, mailer}
   end
 
   @doc false

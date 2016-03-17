@@ -18,13 +18,13 @@ defmodule Courier.Adapters.SMTPBase do
       The `options` must be a Keyword list. The keys must be atoms. The options conform to the options
       expected in `[gen_smtp_client](https://github.com/Vagabond/gen_smtp#client-example)`
       """
-      def deliver(message, config)
-      def deliver(%Mail.Message{} = message, config) do
+      def deliver(message, opts)
+      def deliver(%Mail.Message{} = message, opts) do
         rendered_message =
           message
           |> strip_bcc()
           |> Mail.Renderers.RFC2822.render()
-        :gen_smtp_client.send({from(message), to(message), rendered_message}, config)
+        :gen_smtp_client.send({from(message), to(message), rendered_message}, opts)
       end
 
       defp from(message) do

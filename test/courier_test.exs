@@ -21,6 +21,15 @@ defmodule Courier.Test do
     end
   end
 
+  defmodule DateTestAdapter do
+    def init(_), do: nil
+    def deliver(%Mail.Message{} = message, _opts) do
+      if Mail.Message.get_header(message, :date) do
+        raise DeliverySuccess
+      end
+    end
+  end
+
   defmodule View do
     use Phoenix.View, root: "test/fixtures/templates"
     use Phoenix.HTML
@@ -29,21 +38,17 @@ defmodule Courier.Test do
       do: String.upcase(message)
   end
 
-  Application.put_env(:test, Courier.Test.MyMailer, %{
-    adapter: TestAdapter
-  })
+  Application.put_env(:test, Courier.Test.MyMailer, %{adapter: TestAdapter})
+  defmodule MyMailer, do: use Courier, otp_app: :test
 
-  defmodule MyMailer do
-    use Courier, otp_app: :test
-  end
+  Application.put_env(:test, Courier.Test.MyOptionMailer, %{adapter: OptionTestAdapter, success: false})
+  defmodule MyOptionMailer, do: use Courier, otp_app: :test
 
-  Application.put_env(:test, Courier.Test.MyOptionMailer, %{
-    adapter: OptionTestAdapter,
-    success: false
-  })
+  Application.put_env(:test, Courier.Test.MyDateMailer, %{adapter: DateTestAdapter})
+  defmodule MyDateMailer, do: use Courier, otp_app: :test
 
-  defmodule MyOptionMailer do
-    use Courier, otp_app: :test
+  test "Using Courier: parsing config" do
+    assert MyMailer.__adapter__ == TestAdapter
   end
 
   test "Using Courier: parsing config" do
@@ -59,6 +64,12 @@ defmodule Courier.Test do
   test "delivering a message with options will override the inherited options from config" do
     assert_raise DeliverySuccess, fn ->
       MyOptionMailer.deliver(Mail.build(), success: true)
+    end
+  end
+
+  test "delivering a message will inject a date into the message header" do
+    assert_raise DeliverySuccess, fn ->
+      MyDateMailer.deliver(Mail.build())
     end
   end
 

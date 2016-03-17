@@ -44,6 +44,6 @@ defmodule Courier.Mixfile do
      {:gen_smtp, "0.9.0"},
      {:earmark, "~> 0.1", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
-     {:mail, "~> 0.0.3"}]
+     {:mail, github: "dockyard/elixir-mail"}]
   end
 end

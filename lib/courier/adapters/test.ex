@@ -1,3 +1,3 @@
 defmodule Courier.Adapters.Test do
-  use Courier.Adapters.ETS, table: :courier_test_adapter
+  use Courier.Adapters.Agent
 end

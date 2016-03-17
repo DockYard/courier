@@ -1,8 +1,10 @@
 defmodule Courier.Adapters.TestTest do
   use ExUnit.Case
+  use Courier.Case
 
-  setup do
+  setup_all do
     Courier.Adapters.Test.init([])
+
     :ok
   end
 

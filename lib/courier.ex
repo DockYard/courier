@@ -21,10 +21,7 @@ defmodule Courier do
       end
 
       def deliver(%Mail.Message{} = message, opts \\ []) do
-        config =
-          unquote(Macro.escape(config))
-        opts = Enum.into(opts, %{}, fn(t) -> t end)
-        opts = Map.merge(config, opts)
+        opts = Keyword.merge(unquote(Macro.escape(config)), opts)
 
         message
         |> Mail.Message.put_header(:date, :calendar.universal_time())

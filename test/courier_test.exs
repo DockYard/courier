@@ -38,13 +38,13 @@ defmodule Courier.Test do
       do: String.upcase(message)
   end
 
-  Application.put_env(:test, Courier.Test.MyMailer, %{adapter: TestAdapter})
+  Application.put_env(:test, Courier.Test.MyMailer, [adapter: TestAdapter])
   defmodule MyMailer, do: use Courier, otp_app: :test
 
-  Application.put_env(:test, Courier.Test.MyOptionMailer, %{adapter: OptionTestAdapter, success: false})
+  Application.put_env(:test, Courier.Test.MyOptionMailer, [adapter: OptionTestAdapter, success: false])
   defmodule MyOptionMailer, do: use Courier, otp_app: :test
 
-  Application.put_env(:test, Courier.Test.MyDateMailer, %{adapter: DateTestAdapter})
+  Application.put_env(:test, Courier.Test.MyDateMailer, [adapter: DateTestAdapter])
   defmodule MyDateMailer, do: use Courier, otp_app: :test
 
   test "Using Courier: parsing config" do

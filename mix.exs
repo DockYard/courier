@@ -3,7 +3,7 @@ defmodule Courier.Mixfile do
 
   def project do
     [app: :courier,
-     version: "0.0.1",
+     version: "0.0.2",
      elixir: "~> 1.2",
      build_embedded: Mix.env == :prod,
      start_permanent: Mix.env == :prod,
@@ -44,6 +44,6 @@ defmodule Courier.Mixfile do
      {:gen_smtp, "0.9.0"},
      {:earmark, "~> 0.1", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},
-     {:mail, github: "dockyard/elixir-mail"}]
+     {:mail, "~> 0.0.4"}]
   end
 end

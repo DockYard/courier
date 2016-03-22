@@ -26,7 +26,7 @@ defmodule Courier.Adapters.Agent do
       defmodule MockAdapter do
         use Courier.Adapters.Agent
       end
-      MockAdapter.init([])
+      MockAdapter.start_link([])
       MockAdapter.messages_for("joe@example.com")
       [%Mail.Message{...}, %Mail.Message{...}]
   """)
@@ -39,7 +39,7 @@ defmodule Courier.Adapters.Agent do
       defmodule MockAdapter do
         use Courier.Adapters.Agent
       end
-      MockAdapter.init([])
+      MockAdapter.start_link([])
       MockAdapter.all_recipients()
       ["joe@example.com", {"Brian", "brian@example.com"}]
   """)
@@ -59,7 +59,11 @@ defmodule Courier.Adapters.Agent do
       use Courier.Storage
       @behaviour Courier.Adapter
 
-      def init(_) do
+      def children(config) do
+        [Supervisor.Spec.worker(__MODULE__, [config])]
+      end
+
+      def start_link(config) do
         Agent.start_link(fn -> [] end, name: __MODULE__)
       end
 
@@ -78,7 +82,7 @@ defmodule Courier.Adapters.Agent do
         Agent.update(__MODULE__, fn(messages) -> List.delete(messages, message) end)
       end
 
-      defoverridable [init: 1, deliver: 2, messages: 0, clear: 0, delete: 1]
+      defoverridable [deliver: 2, messages: 0, clear: 0, delete: 1]
     end
   end
 end

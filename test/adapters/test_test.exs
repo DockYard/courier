@@ -1,11 +1,14 @@
 defmodule Courier.Adapters.TestTest do
   use ExUnit.Case
-  use Courier.Case
 
-  setup_all do
-    Courier.Adapters.Test.init([])
+  @adapter Courier.Adapters.Test
 
-    :ok
+  setup do
+    {:ok, pid} =
+      @adapter.children([])
+      |> Supervisor.start_link(strategy: :one_for_one)
+
+    {:ok, pid: pid}
   end
 
   @message1 Mail.build()
@@ -27,34 +30,34 @@ defmodule Courier.Adapters.TestTest do
             |> Mail.put_text("To annoy the adults!")
 
   test "will store messages in ets when delivered" do
-    assert Courier.Adapters.Test.messages() == []
+    assert @adapter.messages() == []
 
-    Courier.Adapters.Test.deliver(@message1, %{})
-    Courier.Adapters.Test.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert Enum.member?(Courier.Adapters.Test.messages(), @message1)
-    assert Enum.member?(Courier.Adapters.Test.messages(), @message2)
+    assert Enum.member?(@adapter.messages(), @message1)
+    assert Enum.member?(@adapter.messages(), @message2)
   end
 
   test "find all unique recipients" do
-    assert Courier.Adapters.Test.recipients == []
+    assert @adapter.recipients == []
 
-    Courier.Adapters.Test.deliver(@message1, %{})
-    Courier.Adapters.Test.deliver(@message2, %{})
-    Courier.Adapters.Test.deliver(@message3, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message3, %{})
 
-    assert length(Courier.Adapters.Test.recipients()) == 3
-    assert Enum.member?(Courier.Adapters.Test.recipients(), "jack@example.com")
-    assert Enum.member?(Courier.Adapters.Test.recipients(), "jill@example.com")
-    assert Enum.member?(Courier.Adapters.Test.recipients(), "spider@example.com")
+    assert length(@adapter.recipients()) == 3
+    assert Enum.member?(@adapter.recipients(), "jack@example.com")
+    assert Enum.member?(@adapter.recipients(), "jill@example.com")
+    assert Enum.member?(@adapter.recipients(), "spider@example.com")
   end
 
   test "find all messages by recipient" do
-    Courier.Adapters.Test.deliver(@message1, %{})
-    Courier.Adapters.Test.deliver(@message2, %{})
-    Courier.Adapters.Test.deliver(@message3, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message3, %{})
 
-    messages = Courier.Adapters.Test.messages_for("jack@example.com")
+    messages = @adapter.messages_for("jack@example.com")
 
     assert Enum.member?(messages, @message1)
     refute Enum.member?(messages, @message2)
@@ -62,25 +65,25 @@ defmodule Courier.Adapters.TestTest do
   end
 
   test "clean all emails" do
-    Courier.Adapters.Test.deliver(@message1, %{})
-    Courier.Adapters.Test.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert length(Courier.Adapters.Test.messages()) == 2
+    assert length(@adapter.messages()) == 2
 
-    Courier.Adapters.Test.clear()
+    @adapter.clear()
 
-    assert length(Courier.Adapters.Test.messages()) == 0
+    assert length(@adapter.messages()) == 0
   end
 
   test "deleting an email" do
-    Courier.Adapters.Test.deliver(@message1, %{})
-    Courier.Adapters.Test.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert length(Courier.Adapters.Test.messages()) == 2
+    assert length(@adapter.messages()) == 2
 
-    Courier.Adapters.Test.delete(@message1)
+    @adapter.delete(@message1)
 
-    messages = Courier.Adapters.Test.messages()
+    messages = @adapter.messages()
     assert length(messages) == 1
     assert messages == [@message2]
   end

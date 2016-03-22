@@ -21,24 +21,33 @@ defmodule Courier do
       end
 
       def deliver(%Mail.Message{} = message, opts \\ []) do
-        opts = Keyword.merge(unquote(Macro.escape(config)), opts)
+        opts =
+          Keyword.merge(unquote(Macro.escape(config)), opts)
+          |> Keyword.merge([adapter: __adapter__, mailer: __MODULE__])
 
         message
         |> Mail.Message.put_header(:date, :calendar.universal_time())
-        |> __adapter__.deliver(opts)
+        |> Courier.Scheduler.deliver(opts)
       end
+
+      def init(_), do: :ok
+
       def __adapter__(),
         do: unquote(Macro.escape(adapter))
     end
   end
 
   def start_link(mailer, config) do
-    GenServer.start_link(__MODULE__, [mailer, config])
+    Supervisor.start_link(__MODULE__, [mailer, config])
   end
 
   def init([mailer, config]) do
-    _ = mailer.__adapter__.init(config)
-    {:ok, mailer}
+    import Supervisor.Spec
+
+    adapter = mailer.__adapter__
+
+    adapter.children(config)
+    |> supervise(strategy: :one_for_all)
   end
 
   @doc false
@@ -48,11 +57,6 @@ defmodule Courier do
     adapter = config[:adapter]
 
     {otp_app, adapter, config}
-  end
-
-  @doc false
-  def init_adapter(adapter, config) do
-    adapter.init(config)
   end
 
   @doc """

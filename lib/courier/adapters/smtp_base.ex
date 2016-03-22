@@ -9,8 +9,11 @@ defmodule Courier.Adapters.SMTPBase do
     quote do
       @behaviour Courier.Adapter
 
-      @doc false
-      def init(_), do: nil
+      def children(config) do
+        [Supervisor.Spec.worker(__MODULE__, [config])]
+      end
+
+      def start_link(_config), do: :ignore
 
       @doc """
       Primary delivery hook
@@ -24,7 +27,7 @@ defmodule Courier.Adapters.SMTPBase do
           message
           |> strip_bcc()
           |> Mail.Renderers.RFC2822.render()
-        :gen_smtp_client.send({from(message), to(message), rendered_message}, opts)
+        :gen_smtp_client.send_blocking({from(message), to(message), rendered_message}, opts)
       end
 
       defp from(message) do

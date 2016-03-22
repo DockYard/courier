@@ -39,8 +39,7 @@ message =
   |> Mail.put_subject("How are things?")
   |> Mail.put_text("Let's meet for drinks!")
   |> Mail.put_html("<p>Let's meet for drinks!</p>")
-
-MyApp.Mailer.deliver(message)
+  |> MyApp.Mailer.deliver()
 ```
 
 Courier will deliver the message through the adapter that is configured.
@@ -58,8 +57,7 @@ message =
   |> Mail.put_subject("How are things?")
   |> Courier.render(MyApp.MailerView, "check_in.txt", user: user)
   |> Courier.render(MyApp.MailerView, "check_in.html", user: user)
-
-MyApp.Mailer.deliver(message)
+  |> MyApp.Mailer.deliver()
 ```
 
 `Courier.render/4` will parse the template path to determine the
@@ -92,13 +90,15 @@ rener as `[File content]`
 Options:
 - `level` the `Logger` level to send the message to (defaults to `:info`)
 
-### Courier.Adapters.ETS
-
-Will store messages in ETS. Includes API for interacting with the messages.
-
 ### Courier.Adapters.Test
 
 Exposes the ETS adapter from a REST based API
+
+### Courier.Adapters.Web
+
+CourierWeb adds a web interface for viewing the messages sent. To use it
+add the library to your `mix.exs` file.  For more information on this adapter please refer to
+[CourierWeb](https://github.com/DockYard/courier_web)
 
 ## Authors ##
 

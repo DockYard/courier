@@ -17,7 +17,7 @@ defmodule Courier.Mixfile do
   #
   # Type `mix help compile.app` for more information
   def application do
-    [applications: [:logger, :phoenix, :gen_smtp]]
+    [applications: [:logger, :gen_smtp]]
   end
 
   def description, do: "Adapter based email delivery"
@@ -41,6 +41,7 @@ defmodule Courier.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1", only: :test},
      {:phoenix_html, "~> 2.2", only: :test},
+     {:poolboy, "~> 1.5"},
      {:gen_smtp, "0.9.0"},
      {:earmark, "~> 0.1", only: :dev},
      {:ex_doc, "~> 0.11", only: :dev},

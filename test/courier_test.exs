@@ -7,8 +7,10 @@ defmodule Courier.Test do
 
   defmodule TestAdapter do
     def init(_), do: nil
-    def deliver(%Mail.Message{} = _message, _opts) do
-      raise DeliverySuccess
+    def deliver(%Mail.Message{} = _message, opts) do
+      send opts[:pid], :sent
+
+      :ok
     end
   end
 
@@ -16,17 +18,21 @@ defmodule Courier.Test do
     def init(_), do: nil
     def deliver(%Mail.Message{} = _message, opts) do
       if opts[:success] do
-        raise DeliverySuccess
+        send opts[:pid], :sent
       end
+
+      :ok
     end
   end
 
   defmodule DateTestAdapter do
     def init(_), do: nil
-    def deliver(%Mail.Message{} = message, _opts) do
+    def deliver(%Mail.Message{} = message, opts) do
       if Mail.Message.get_header(message, :date) do
-        raise DeliverySuccess
+        send opts[:pid], :sent
       end
+
+      :ok
     end
   end
 
@@ -51,26 +57,49 @@ defmodule Courier.Test do
     assert MyMailer.__adapter__ == TestAdapter
   end
 
-  test "Using Courier: parsing config" do
-    assert MyMailer.__adapter__ == TestAdapter
-  end
-
   test "delivering a message delegates to the adapter" do
-    assert_raise DeliverySuccess, fn ->
-      MyMailer.deliver(Mail.build())
-    end
+    opts = [adapter: TestAdapter, interval: 1, pid: self()]
+
+    {:ok, pid} =
+      Courier.Scheduler.children(opts)
+      |> Supervisor.start_link(strategy: :one_for_all)
+
+    MyMailer.deliver(Mail.build(), opts)
+
+    assert_receive :sent
+    refute_receive :sent
+
+    Supervisor.stop(pid)
   end
 
   test "delivering a message with options will override the inherited options from config" do
-    assert_raise DeliverySuccess, fn ->
-      MyOptionMailer.deliver(Mail.build(), success: true)
-    end
+    opts = [adapter: OptionTestAdapter, interval: 1, pid: self(), success: true]
+
+    {:ok, pid} =
+      Courier.Scheduler.children(opts)
+      |> Supervisor.start_link(strategy: :one_for_all)
+
+    MyOptionMailer.deliver(Mail.build(), opts)
+
+    assert_receive :sent
+    refute_receive :sent
+
+    Supervisor.stop(pid)
   end
 
   test "delivering a message will inject a date into the message header" do
-    assert_raise DeliverySuccess, fn ->
-      MyDateMailer.deliver(Mail.build())
-    end
+    opts = [adapter: DateTestAdapter, interval: 1, pid: self()]
+
+    {:ok, pid} =
+      Courier.Scheduler.children(opts)
+      |> Supervisor.start_link(strategy: :one_for_all)
+
+    MyDateMailer.deliver(Mail.build(), opts)
+
+    assert_receive :sent
+    refute_receive :sent
+
+    Supervisor.stop(pid)
   end
 
   test "rendering text from a view into a message" do

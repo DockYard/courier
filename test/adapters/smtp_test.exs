@@ -1,12 +1,31 @@
 defmodule Courier.Adapters.SMTPTest do
   use ExUnit.Case
 
-  setup_all do
-    {:ok, pid} = :gen_smtp_server.start(:smtp_server_example)
+  defmodule Server do
+    def init(_hostname, _session_count, _address, options),
+      do: {:ok, "", %{options: options}}
 
-    on_exit fn ->
-      Process.exit(pid, :kill)
+    def handle_EHLO(_hostname, extensions, state),
+      do: {:ok, extensions, state}
+
+    def handle_DATA(from, to, data, state) do
+      send get_in(state, [:options, :pid]), {from, to, data}
+
+      {:ok, "foobar", state}
     end
+
+    def handle_MAIL(_from, state),
+      do: {:ok, state}
+
+    def handle_RCPT(_to, state),
+      do: {:ok, state}
+
+    def terminate(reason, state),
+      do: {:ok, reason, state}
+  end
+
+  setup do
+    {:ok, _pid} = :gen_smtp_server.start_link(Server, [[sessionoptions: [callbackoptions: [pid: self()]]]])
 
     :ok
   end
@@ -20,9 +39,18 @@ defmodule Courier.Adapters.SMTPTest do
       |> Mail.put_subject("Sending you a test")
       |> Mail.put_text("Hopefully it works!")
 
-    {:ok, pid} = Courier.Adapters.SMTP.deliver(message, [relay: "localhost", port: 2525])
+    Courier.Adapters.SMTP.deliver(message, [relay: "localhost", port: 2525])
 
-    ref = Process.monitor(pid)
-    assert_receive {:DOWN, ^ref, :process, _, :normal}, 500
+    receive do
+      {from, to, data} -> 
+        assert from == "from@example.com"
+        assert to == ["to@example.com", "other@example.com"]
+        assert data =~ "Sending you a test"
+        assert data =~ "Hopefully it works!"
+        refute data =~ "other@example.com"
+    after
+      1000 ->
+        raise "Expected message"
+    end
   end
 end

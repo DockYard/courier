@@ -13,8 +13,11 @@ defmodule Courier.Adapters.Logger do
   - `level` the `Logger` level to send the message to (defaults to `:info`)
   """
 
-  @doc false
-  def init(_), do: nil
+  def children(config) do
+    [Supervisor.Spec.worker(__MODULE__, [config])]
+  end
+
+  def start_link(_config), do: :ignore
 
   @doc """
   Delivers the mssage to the Logger

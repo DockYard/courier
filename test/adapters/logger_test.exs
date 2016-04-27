@@ -3,6 +3,16 @@ defmodule Courier.Adapters.LoggerTest do
   require Logger
   import ExUnit.CaptureIO
 
+  @adapter Courier.Adapters.Logger
+
+  setup do
+    {:ok, pid} =
+      @adapter.children([])
+      |> Supervisor.start_link(strategy: :one_for_one)
+
+    {:ok, pid: pid}
+  end
+
   test "will output the message via the Logger defaulting to :info level" do
     message =
       Mail.build()
@@ -12,7 +22,7 @@ defmodule Courier.Adapters.LoggerTest do
       |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:info, fn ->
-      Courier.Adapters.Logger.deliver(message, %{})
+      @adapter.deliver(message, %{})
     end)
 
     assert output =~ "Subject: Let's go up the hill!"
@@ -31,7 +41,7 @@ defmodule Courier.Adapters.LoggerTest do
       |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:debug, fn ->
-      Courier.Adapters.Logger.deliver(message, %{level: :debug})
+      @adapter.deliver(message, %{level: :debug})
     end)
 
     assert output =~ "Subject: Let's go up the hill!"

@@ -5,16 +5,14 @@ defmodule Courier.Adapters.AgentTest do
     use Courier.Adapters.Agent
   end
 
-  setup_all do
-    MockAdapter.init([])
-
-    :ok
-  end
+  @adapter MockAdapter
 
   setup do
-    MockAdapter.clear()
+    {:ok, pid} =
+      @adapter.children([])
+      |> Supervisor.start_link(strategy: :one_for_one)
 
-    :ok
+    {:ok, pid: pid}
   end
 
   @message1 Mail.build()
@@ -36,34 +34,34 @@ defmodule Courier.Adapters.AgentTest do
             |> Mail.put_text("To annoy the adults!")
 
   test "will store messages in ets when delivered" do
-    assert MockAdapter.messages() == []
+    assert @adapter.messages() == []
 
-    MockAdapter.deliver(@message1, %{})
-    MockAdapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert Enum.member?(MockAdapter.messages(), @message1)
-    assert Enum.member?(MockAdapter.messages(), @message2)
+    assert Enum.member?(@adapter.messages(), @message1)
+    assert Enum.member?(@adapter.messages(), @message2)
   end
 
   test "find all unique recipients" do
-    assert MockAdapter.recipients == []
+    assert @adapter.recipients == []
 
-    MockAdapter.deliver(@message1, %{})
-    MockAdapter.deliver(@message2, %{})
-    MockAdapter.deliver(@message3, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message3, %{})
 
-    assert length(MockAdapter.recipients()) == 3
-    assert Enum.member?(MockAdapter.recipients(), "jack@example.com")
-    assert Enum.member?(MockAdapter.recipients(), "jill@example.com")
-    assert Enum.member?(MockAdapter.recipients(), "spider@example.com")
+    assert length(@adapter.recipients()) == 3
+    assert Enum.member?(@adapter.recipients(), "jack@example.com")
+    assert Enum.member?(@adapter.recipients(), "jill@example.com")
+    assert Enum.member?(@adapter.recipients(), "spider@example.com")
   end
 
   test "find all messages by recipient" do
-    MockAdapter.deliver(@message1, %{})
-    MockAdapter.deliver(@message2, %{})
-    MockAdapter.deliver(@message3, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message3, %{})
 
-    messages = MockAdapter.messages_for("jack@example.com")
+    messages = @adapter.messages_for("jack@example.com")
 
     assert Enum.member?(messages, @message1)
     refute Enum.member?(messages, @message2)
@@ -71,25 +69,25 @@ defmodule Courier.Adapters.AgentTest do
   end
 
   test "clean all emails" do
-    MockAdapter.deliver(@message1, %{})
-    MockAdapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert length(MockAdapter.messages()) == 2
+    assert length(@adapter.messages()) == 2
 
-    MockAdapter.clear()
+    @adapter.clear()
 
-    assert length(MockAdapter.messages()) == 0
+    assert length(@adapter.messages()) == 0
   end
 
   test "deleting an email" do
-    MockAdapter.deliver(@message1, %{})
-    MockAdapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, %{})
+    @adapter.deliver(@message2, %{})
 
-    assert length(MockAdapter.messages()) == 2
+    assert length(@adapter.messages()) == 2
 
-    MockAdapter.delete(@message1)
+    @adapter.delete(@message1)
 
-    messages = MockAdapter.messages()
+    messages = @adapter.messages()
     assert length(messages) == 1
     assert messages == [@message2]
   end

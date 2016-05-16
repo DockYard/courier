@@ -10,7 +10,7 @@ for composing the message.
 First create your mailer:
 
 ```elixir
-defmdodule MyApp.Mailer do
+defmodule MyApp.Mailer do
   use Courier, otp_app: :my_app
 end
 ```

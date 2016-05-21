@@ -24,7 +24,7 @@ config :my_app, MyApp.Mailer,
   hostname: "my-mail-server",
   port: 2525,
   username: System.get_env("COURIER_USERNAME"),
-  password: System.get_env("CORUIER_PASSWORD")
+  password: System.get_env("COURIER_PASSWORD")
 ```
 
 More configuration options for each adapter is in the [Adapters](#Adapter) section.

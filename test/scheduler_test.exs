@@ -122,7 +122,7 @@ defmodule Courier.SchedulerTest do
     future =
       :calendar.universal_time()
       |> :calendar.datetime_to_gregorian_seconds()
-      |> + 2
+      |> Kernel.+(2)
       |> :calendar.gregorian_seconds_to_datetime()
 
     Mail.build()

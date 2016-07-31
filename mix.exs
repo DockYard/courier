@@ -41,10 +41,10 @@ defmodule Courier.Mixfile do
   defp deps do
     [{:phoenix, "~> 1.1", only: :test},
      {:phoenix_html, "~> 2.2", only: :test},
-     {:poolboy, "~> 1.5"},
-     {:gen_smtp, "0.9.0"},
-     {:earmark, "~> 0.1", only: :dev},
-     {:ex_doc, "~> 0.11", only: :dev},
-     {:mail, "~> 0.0.4"}]
+     {:poolboy, "~> 1.5.0"},
+     {:gen_smtp, "~> 0.11.0"},
+     {:earmark, "~> 1.0.1", only: :dev},
+     {:ex_doc, "~> 0.13.0", only: :dev},
+     {:mail, "~> 0.1.0"}]
   end
 end

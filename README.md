@@ -32,14 +32,13 @@ More configuration options for each adapter is in the [Adapters](#Adapter) secti
 Then you can compose and deliver the message:
 
 ```elixir
-message =
-  Mail.build_multipart()
-  |> Mail.put_to("friend@example.com")
-  |> Mail.put_from("me@example.com")
-  |> Mail.put_subject("How are things?")
-  |> Mail.put_text("Let's meet for drinks!")
-  |> Mail.put_html("<p>Let's meet for drinks!</p>")
-  |> MyApp.Mailer.deliver()
+Mail.build_multipart()
+|> Mail.put_to("friend@example.com")
+|> Mail.put_from("me@example.com")
+|> Mail.put_subject("How are things?")
+|> Mail.put_text("Let's meet for drinks!")
+|> Mail.put_html("<p>Let's meet for drinks!</p>")
+|> MyApp.Mailer.deliver()
 ```
 
 Courier will deliver the message through the adapter that is configured.
@@ -49,15 +48,14 @@ Courier will deliver the message through the adapter that is configured.
 If you'd like to render the `text` or `html` parts with a Phoenix view
 you should use `Courier.render/4`
 
-```
-message =
-  Mail.build_multipart()
-  |> Mail.put_to("friend@example.com")
-  |> Mail.put_from("me@example.com")
-  |> Mail.put_subject("How are things?")
-  |> Courier.render(MyApp.MailerView, "check_in.txt", user: user)
-  |> Courier.render(MyApp.MailerView, "check_in.html", user: user)
-  |> MyApp.Mailer.deliver()
+```elixir
+Mail.build_multipart()
+|> Mail.put_to("friend@example.com")
+|> Mail.put_from("me@example.com")
+|> Mail.put_subject("How are things?")
+|> Courier.render(MyApp.MailerView, "check_in.txt", user: user)
+|> Courier.render(MyApp.MailerView, "check_in.html", user: user)
+|> MyApp.Mailer.deliver()
 ```
 
 `Courier.render/4` will parse the template path to determine the

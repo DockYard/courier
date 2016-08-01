@@ -4,7 +4,7 @@ Mail delivery for Elixir
 
 [![Build Status](https://secure.travis-ci.org/DockYard/courier.svg?branch=master)](http://travis-ci.org/DockYard/courier)
 
-Courier is an adapter-based mail delivery system for Elixir applications. It depends upon `[Mail](https://github.com/DockYard/elixir-mail)`
+Courier is an adapter-based mail delivery system for Elixir applications. It depends upon [`Mail`](https://github.com/DockYard/elixir-mail)
 for composing the message.
 
 First create your mailer:

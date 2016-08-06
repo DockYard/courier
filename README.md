@@ -4,8 +4,11 @@ Mail delivery for Elixir
 
 [![Build Status](https://secure.travis-ci.org/DockYard/courier.svg?branch=master)](http://travis-ci.org/DockYard/courier)
 
-Courier is an adapter-based mail delivery system for Elixir applications. It depends upon [`Mail`](https://github.com/DockYard/elixir-mail)
-for composing the message.
+Courier is an OTP adapter-based mail delivery system for Elixir applications. It means serious business for sending emails.
+
+![](http://i.imgur.com/2DPqwPw.jpg)
+
+It depends upon [`Mail`](https://github.com/DockYard/elixir-mail) for composing the message.
 
 First create your mailer:
 
@@ -27,7 +30,7 @@ config :my_app, MyApp.Mailer,
   password: System.get_env("CORUIER_PASSWORD")
 ```
 
-More configuration options for each adapter is in the [Adapters](#Adapter) section.
+More configuration options for each adapter is in the [Adapters](#Adapters) section.
 
 Then you can compose and deliver the message:
 
@@ -42,6 +45,41 @@ Mail.build_multipart()
 ```
 
 Courier will deliver the message through the adapter that is configured.
+
+## Deliveries
+
+All deliveries are pushed into a shceduler and sent out asynchronously.
+Let's learn how to customize this scheduler
+
+### Scheduling deliveries
+
+By default if you do not specify a datetime to delivery `at` Courier
+will mark the message for immediate delivery. But let's say we want to
+schedule a specific datetime to send a message. You can do that with:
+
+```elixir
+MyApp.Mailer.deliver(message, at: datetime)
+```
+
+The `datetime` variable should conform to either an Erlang calendar
+tuple `{{year, month, day}, {hour, minute, second}}`
+
+### Pooling
+
+Courier will use a pool to rate limit the number of concurrent messages
+being sent. This is necessary if you are sending to services that hate
+their own rate limits. The default pool size is `10`. If you'd like to
+change this default you can simply modify when configuring your mailer:
+
+
+```elixir
+config :my_app, MyApp.Mailer,
+  pool_size: 15
+```
+
+[Read more about the Scheduler, configuring it, and using
+it.](https://hexdocs.pm/courier/Courier.Scheduler.html)
+
 
 ## Rendering with Phoenix Views
 
@@ -82,8 +120,8 @@ Options:
 
 ### Courier.Adapters.Logger
 
-Will write deliver all messages to the `Logger`. All attachment encoded data will 
-rener as `[File content]`
+Will write deliver all messages to the `Logger`. All attachment encoded data will
+render as `[File content]`
 
 Options:
 - `level` the `Logger` level to send the message to (defaults to `:info`)
@@ -98,6 +136,38 @@ CourierWeb adds a web interface for viewing the messages sent. To use it
 add the library to your `mix.exs` file.  For more information on this adapter please refer to
 [CourierWeb](https://github.com/DockYard/courier_web)
 
+### Writing your own adapter
+
+Creating your own adapter is simple. The only functions necessary are
+`start_link/1` and `deliver/2`
+
+```elixir
+defmodule MyApp.Adapters.Custom do
+  def start_link(_opts), do: :ignore
+
+  def deliver(%Mail.Message{} = message, opts) do
+    # your customized mailer
+  end
+end
+```
+
+The `message` passed into `deliver/2` is not a rendered [RFC2822](https://www.ietf.org/rfc/rfc2822.txt) message.
+If you need the rendered version you can use `mail` to render it:
+
+```elixir
+rendered_message = Mail.render(message, Mail.Renderers.RFC2822)
+```
+
+Please refer to the `mail` library to learn more about creating custom
+message renderers.
+
+Each adapter is treated as its own OTP supervisor within your mailer's
+supervisor tree. This will give you the opportunity to create more
+complex adapters with their own workers. Just override
+`start_link/1` however you'd like. The configuration options declared
+for your mailer within the given mix environment are passed in as the
+argument.
+
 ## Authors ##
 
 * [Brian Cardarella](http://twitter.com/bcardarella)
@@ -110,8 +180,7 @@ This library follows [Semantic Versioning](http://semver.org)
 
 ## Looking for help with your Elixir project? ##
 
-[At DockYard we are ready to help you build your next Elixir project](https://dockyard.com/phoenix-consulting). We have a unique expertise 
-in Elixir and Phoenix development that is unmatched. [Get in touch!](https://dockyard.com/contact/hire-us)
+[At DockYard we are ready to help you build your next Elixir project](https://dockyard.com/phoenix-consulting). We have a unique expertise in Elixir and Phoenix development that is unmatched. [Get in touch!](https://dockyard.com/contact/hire-us)
 
 At DockYard we love Elixir! You can [read our Elixir blog posts](https://dockyard.com/blog/categories/elixir)
 or come visit us at [The Boston Elixir Meetup](http://www.meetup.com/Boston-Elixir/) that we organize.

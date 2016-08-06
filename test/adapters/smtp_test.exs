@@ -42,7 +42,7 @@ defmodule Courier.Adapters.SMTPTest do
     Courier.Adapters.SMTP.deliver(message, [relay: "localhost", port: 2525])
 
     receive do
-      {from, to, data} -> 
+      {from, to, data} ->
         assert from == "from@example.com"
         assert to == ["to@example.com", "other@example.com"]
         assert data =~ "Sending you a test"

@@ -9,11 +9,7 @@ defmodule Courier.Adapters.SMTPBase do
     quote do
       @behaviour Courier.Adapter
 
-      def children(config) do
-        [Supervisor.Spec.worker(__MODULE__, [config])]
-      end
-
-      def start_link(_config), do: :ignore
+      def start_link(_opts), do: :ignore
 
       @doc """
       Primary delivery hook

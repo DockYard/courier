@@ -46,8 +46,20 @@ defmodule Courier.Stores.AgentTest do
 
     messages = Store.all(past: true)
 
-    assert Enum.member?(messages, @message1)
-    refute Enum.member?(messages, @message2)
+    assert Enum.member?(messages, {@message1, past, []})
+    refute Enum.member?(messages, {@message2, future, []})
+  end
+
+  test "put/3 can take options that are stored with the message" do
+    assert Store.all() == []
+
+    past = {{2010, 1, 1}, {0, 0, 0}}
+
+    :ok = Store.put({@message1, past, [foo: :bar]})
+
+    messages = Store.all()
+
+    assert Enum.member?(messages, {@message1, past, [foo: :bar]})
   end
 
   test "all() will return all messages regardless of timestamp" do
@@ -61,8 +73,8 @@ defmodule Courier.Stores.AgentTest do
 
     messages = Store.all()
 
-    assert Enum.member?(messages, @message1)
-    assert Enum.member?(messages, @message2)
+    assert Enum.member?(messages, {@message1, past, []})
+    assert Enum.member?(messages, {@message2, future, []})
   end
 
   test "clear all emails" do
@@ -88,7 +100,7 @@ defmodule Courier.Stores.AgentTest do
 
     messages = Store.all()
     assert length(messages) == 1
-    assert messages == [@message2]
+    assert messages == [{@message2, past, []}]
   end
 
   test "deleting many messages" do
@@ -103,6 +115,6 @@ defmodule Courier.Stores.AgentTest do
 
     messages = Store.all()
     assert length(messages) == 1
-    assert messages == [@message3]
+    assert messages == [{@message3, past, []}]
   end
 end

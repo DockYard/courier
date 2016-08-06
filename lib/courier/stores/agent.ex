@@ -10,15 +10,18 @@ defmodule Courier.Stores.Agent do
       end
 
       def all() do
-        Agent.get(__MODULE__, &strip_timestamps/1)
+        Agent.get(__MODULE__, &(&1))
       end
 
-      def put({%Mail.Message{} = message, timestamp}) do
-        Agent.update(__MODULE__, fn(messages) -> [{message, timestamp} | messages] end)
+      def put({%Mail.Message{} = message, timestamp}),
+        do: put({message, timestamp, []})
+
+      def put({%Mail.Message{} = message, timestamp, opts}) do
+        Agent.update(__MODULE__, fn(messages) -> [{message, timestamp, opts} | messages] end)
       end
 
       def delete(%Mail.Message{} = message) do
-        Agent.update(__MODULE__, fn(messages) -> 
+        Agent.update(__MODULE__, fn(messages) ->
           messages
           |> Enum.find_index(&(message == elem(&1, 0)))
           |> case do
@@ -43,17 +46,12 @@ defmodule Courier.Stores.Agent do
           |> :calendar.datetime_to_gregorian_seconds()
 
         messages
-        |> Enum.reduce([], fn({message, timestamp}, acc) ->
+        |> Enum.reduce([], fn({message, timestamp, opts}, acc) ->
           cond do
-            :calendar.datetime_to_gregorian_seconds(timestamp) <= current_seconds -> [message | acc]
+            :calendar.datetime_to_gregorian_seconds(timestamp) <= current_seconds -> [{message, timestamp, opts} | acc]
             true -> acc
           end
         end)
-      end
-
-      defp strip_timestamps(messages) do
-        messages
-        |> Enum.map(&(elem(&1, 0)))
       end
     end
   end

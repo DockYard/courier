@@ -26,8 +26,8 @@ config :my_app, MyApp.Mailer,
   relay: "smtp.myserver.com",
   hostname: "my-mail-server",
   port: 2525,
-  username: System.get_env("COURIER_USERNMAE"),
-  password: System.get_env("CORUIER_PASSWORD")
+  username: System.get_env("COURIER_USERNAME"),
+  password: System.get_env("COURIER_PASSWORD")
 ```
 
 More configuration options for each adapter is in the [Adapters](#Adapters) section.

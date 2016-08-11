@@ -40,7 +40,7 @@ defmodule Courier.Adapters.Agent do
         use Courier.Adapters.Agent
       end
       MockAdapter.start_link([])
-      MockAdapter.all_recipients()
+      MockAdapter.recipients()
       ["joe@example.com", {"Brian", "brian@example.com"}]
   """)
 
@@ -59,11 +59,7 @@ defmodule Courier.Adapters.Agent do
       use Courier.Storage
       @behaviour Courier.Adapter
 
-      def children(config) do
-        [Supervisor.Spec.worker(__MODULE__, [config])]
-      end
-
-      def start_link(config) do
+      def start_link(_opts) do
         Agent.start_link(fn -> [] end, name: __MODULE__)
       end
 

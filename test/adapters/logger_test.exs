@@ -7,7 +7,7 @@ defmodule Courier.Adapters.LoggerTest do
 
   setup do
     {:ok, pid} =
-      @adapter.children([])
+      [Supervisor.Spec.supervisor(@adapter, [[]])]
       |> Supervisor.start_link(strategy: :one_for_one)
 
     {:ok, pid: pid}
@@ -22,7 +22,7 @@ defmodule Courier.Adapters.LoggerTest do
       |> Mail.put_text("To fetch a pail of water!")
 
     output = capture_log(:info, fn ->
-      @adapter.deliver(message, %{})
+      @adapter.deliver(message, [])
     end)
 
     assert output =~ "Subject: Let's go up the hill!"

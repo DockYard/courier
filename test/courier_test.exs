@@ -6,7 +6,7 @@ defmodule Courier.Test do
   end
 
   defmodule TestAdapter do
-    def init(_), do: nil
+    def start_link(_), do: :ignore
     def deliver(%Mail.Message{} = _message, opts) do
       send opts[:pid], :sent
 
@@ -15,7 +15,7 @@ defmodule Courier.Test do
   end
 
   defmodule OptionTestAdapter do
-    def init(_), do: nil
+    def start_link(_), do: :ignore
     def deliver(%Mail.Message{} = _message, opts) do
       if opts[:success] do
         send opts[:pid], :sent
@@ -26,7 +26,7 @@ defmodule Courier.Test do
   end
 
   defmodule DateTestAdapter do
-    def init(_), do: nil
+    def start_link(_), do: :ignore
     def deliver(%Mail.Message{} = message, opts) do
       if Mail.Message.get_header(message, :date) do
         send opts[:pid], :sent

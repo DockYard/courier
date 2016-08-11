@@ -9,7 +9,7 @@ defmodule Courier.Adapters.AgentTest do
 
   setup do
     {:ok, pid} =
-      @adapter.children([])
+      [Supervisor.Spec.supervisor(@adapter, [[]])]
       |> Supervisor.start_link(strategy: :one_for_one)
 
     {:ok, pid: pid}
@@ -36,8 +36,8 @@ defmodule Courier.Adapters.AgentTest do
   test "will store messages in ets when delivered" do
     assert @adapter.messages() == []
 
-    @adapter.deliver(@message1, %{})
-    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, [])
+    @adapter.deliver(@message2, [])
 
     assert Enum.member?(@adapter.messages(), @message1)
     assert Enum.member?(@adapter.messages(), @message2)
@@ -46,9 +46,9 @@ defmodule Courier.Adapters.AgentTest do
   test "find all unique recipients" do
     assert @adapter.recipients == []
 
-    @adapter.deliver(@message1, %{})
-    @adapter.deliver(@message2, %{})
-    @adapter.deliver(@message3, %{})
+    @adapter.deliver(@message1, [])
+    @adapter.deliver(@message2, [])
+    @adapter.deliver(@message3, [])
 
     assert length(@adapter.recipients()) == 3
     assert Enum.member?(@adapter.recipients(), "jack@example.com")
@@ -57,9 +57,9 @@ defmodule Courier.Adapters.AgentTest do
   end
 
   test "find all messages by recipient" do
-    @adapter.deliver(@message1, %{})
-    @adapter.deliver(@message2, %{})
-    @adapter.deliver(@message3, %{})
+    @adapter.deliver(@message1, [])
+    @adapter.deliver(@message2, [])
+    @adapter.deliver(@message3, [])
 
     messages = @adapter.messages_for("jack@example.com")
 
@@ -69,8 +69,8 @@ defmodule Courier.Adapters.AgentTest do
   end
 
   test "clean all emails" do
-    @adapter.deliver(@message1, %{})
-    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, [])
+    @adapter.deliver(@message2, [])
 
     assert length(@adapter.messages()) == 2
 
@@ -80,8 +80,8 @@ defmodule Courier.Adapters.AgentTest do
   end
 
   test "deleting an email" do
-    @adapter.deliver(@message1, %{})
-    @adapter.deliver(@message2, %{})
+    @adapter.deliver(@message1, [])
+    @adapter.deliver(@message2, [])
 
     assert length(@adapter.messages()) == 2
 

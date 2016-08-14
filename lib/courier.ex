@@ -17,13 +17,13 @@ defmodule Courier do
       import Courier
 
       def start_link() do
-        unquote(__MODULE__).start_link(__MODULE__, unquote(Macro.escape(config)))
+        Courier.start_link(__MODULE__, unquote(Macro.escape(config)))
       end
 
       def deliver(%Mail.Message{} = message, opts \\ []) do
         opts =
           Keyword.merge(unquote(Macro.escape(config)), opts)
-          |> Keyword.merge([adapter: __adapter__, mailer: __MODULE__, sent_from: self()])
+          |> Keyword.merge([adapter: __adapter__(), mailer: __MODULE__, sent_from: self()])
 
         message
         |> Mail.Message.put_header(:date, :calendar.universal_time())
@@ -39,11 +39,11 @@ defmodule Courier do
 
   @doc false
   def start_link(mailer, config) do
-    Supervisor.start_link(__MODULE__, [mailer, config])
+    Supervisor.start_link(__MODULE__, config, [name: mailer])
   end
 
   @doc false
-  def init([mailer, config]) do
+  def init(config) do
     import Supervisor.Spec
 
     Courier.Scheduler.children(config)

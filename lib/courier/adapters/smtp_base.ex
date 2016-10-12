@@ -27,7 +27,7 @@ defmodule Courier.Adapters.SMTPBase do
       end
 
       defp from(message) do
-        case message.headers.from do
+        case message.headers["from"] do
           {name, email} -> email
           email -> email
         end
@@ -43,7 +43,7 @@ defmodule Courier.Adapters.SMTPBase do
       end
 
       defp strip_bcc(message) do
-        Mail.Message.delete_header(message, :bcc)
+        Mail.Message.delete_header(message, "bcc")
       end
     end
   end

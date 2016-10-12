@@ -12,7 +12,7 @@ defmodule Courier.Renderers.LoggerTest do
       |> Courier.Parsers.Logger.parse()
 
     refute result.multipart
-    assert result.headers.subject == "Test"
+    assert result.headers["subject"] == "Test"
     assert result.body == "This is a test"
   end
 
@@ -28,7 +28,7 @@ defmodule Courier.Renderers.LoggerTest do
       |> Courier.Parsers.Logger.parse()
 
     assert result.multipart
-    assert result.headers.subject == "Test"
+    assert result.headers["subject"] == "Test"
 
     [text_part, html_part] = result.parts
 

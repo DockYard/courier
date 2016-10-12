@@ -26,7 +26,7 @@ defmodule Courier.SchedulerTest do
 
   defmodule OtherAdapter do
     def start_link(_), do: :ignore
-    def deliver(%Mail.Message{headers: %{state: :fail}}, opts) do
+    def deliver(%Mail.Message{headers: %{"state" => :fail}}, opts) do
       send opts[:pid], :error
       raise DeliveryException
     end

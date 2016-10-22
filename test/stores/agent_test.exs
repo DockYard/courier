@@ -36,7 +36,7 @@ defmodule Courier.Stores.AgentTest do
             |> Mail.put_text("To annoy the adults!")
 
   test "will store messages in agent with the given timestamp, only retrieves messages in the past" do
-    assert Store.all(past: true) == []
+    assert Store.pop(past: true) == []
 
     past = {{2010, 1, 1}, {0, 0, 0}}
     future = {{3000, 1, 1}, {0, 0, 0}}
@@ -44,77 +44,40 @@ defmodule Courier.Stores.AgentTest do
     :ok = Store.put({@message1, past})
     :ok = Store.put({@message2, future})
 
-    messages = Store.all(past: true)
+    messages = Store.pop(past: true)
 
     assert Enum.member?(messages, {@message1, past, []})
     refute Enum.member?(messages, {@message2, future, []})
+
+    assert Store.pop(past: true) == []
+  end
+
+  test "pop() will return all messages regardless of timestamp" do
+    assert Store.pop() == []
+
+    past = {{2010, 1, 1}, {0, 0, 0}}
+    future = {{3000, 1, 1}, {0, 0, 0}}
+
+    :ok = Store.put({@message1, past})
+    :ok = Store.put({@message2, future})
+
+    messages = Store.pop()
+
+    assert Enum.member?(messages, {@message1, past, []})
+    assert Enum.member?(messages, {@message2, future, []})
+
+    assert Store.pop() == []
   end
 
   test "put/3 can take options that are stored with the message" do
-    assert Store.all() == []
+    assert Store.pop() == []
 
     past = {{2010, 1, 1}, {0, 0, 0}}
 
     :ok = Store.put({@message1, past, [foo: :bar]})
 
-    messages = Store.all()
+    messages = Store.pop()
 
     assert Enum.member?(messages, {@message1, past, [foo: :bar]})
-  end
-
-  test "all() will return all messages regardless of timestamp" do
-    assert Store.all() == []
-
-    past = {{2010, 1, 1}, {0, 0, 0}}
-    future = {{3000, 1, 1}, {0, 0, 0}}
-
-    :ok = Store.put({@message1, past})
-    :ok = Store.put({@message2, future})
-
-    messages = Store.all()
-
-    assert Enum.member?(messages, {@message1, past, []})
-    assert Enum.member?(messages, {@message2, future, []})
-  end
-
-  test "clear all emails" do
-    past = {{2010, 1, 1}, {0, 0, 0}}
-    :ok = Store.put({@message1, past})
-    :ok = Store.put({@message2, past})
-
-    assert length(Store.all()) == 2
-
-    :ok = Store.clear()
-
-    assert length(Store.all()) == 0
-  end
-
-  test "deleting a message" do
-    past = {{2010, 1, 1}, {0, 0, 0}}
-    :ok = Store.put({@message1, past})
-    :ok = Store.put({@message2, past})
-
-    assert length(Store.all()) == 2
-
-    :ok = Store.delete(@message1)
-
-    messages = Store.all()
-    assert length(messages) == 1
-    assert messages == [{@message2, past, []}]
-  end
-
-  test "deleting many messages" do
-    past = {{2010, 1, 1}, {0, 0, 0}}
-    :ok = Store.put({@message1, past})
-    :ok = Store.put({@message2, past})
-    :ok = Store.put({@message3, past})
-
-    assert length(Store.all()) == 3
-
-    :ok = Store.delete([@message1, @message2])
-
-    messages = Store.all()
-    assert length(messages) == 1
-    assert messages == [{@message3, past, []}]
   end
 end

@@ -107,8 +107,7 @@ defmodule Courier.Scheduler do
       {:ok, opts}
     end
 
-    def handle_call({:deliver, message, message_opts}, _from, [store: store, adapter: adapter, opts: _opts] = state) do
-      store.delete(message)
+    def handle_call({:deliver, message, message_opts}, _from, [store: _store, adapter: adapter, opts: _opts] = state) do
       adapter.deliver(message, message_opts)
 
       {:noreply, state}
@@ -165,7 +164,7 @@ defmodule Courier.Scheduler do
   def handle_info(:poll, %{opts: opts} = state) do
     timeout = opts[:delivery_timeout] || @timeout
     state =
-      store(opts).all(past: true)
+      store(opts).pop(past: true)
       |> Enum.reduce(state, fn({message, _timestamp, message_opts}, state) ->
         %{ref: ref} = Task.Supervisor.async_nolink(opts[:task_sup], fn ->
           :poolboy.transaction(opts[:pool_name], fn(worker_pid) ->

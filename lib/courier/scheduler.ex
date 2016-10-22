@@ -1,7 +1,7 @@
 defmodule Courier.Scheduler do
   use GenServer
 
-  @timeout 5_000
+  @timeout :infinity
   @pool_size 10
   @interval 1_000
 

@@ -5,12 +5,12 @@ defmodule Courier.Stores.Agent do
         Agent.start_link(fn -> [] end, name: __MODULE__)
       end
 
-      def all(past: true) do
-        Agent.get(__MODULE__, &before_now/1)
+      def pop(past: true) do
+        Agent.get_and_update(__MODULE__, &before_now/1)
       end
 
-      def all() do
-        Agent.get(__MODULE__, &(&1))
+      def pop() do
+        Agent.get_and_update(__MODULE__, &({&1, []}))
       end
 
       def put({%Mail.Message{} = message, timestamp}),
@@ -18,23 +18,6 @@ defmodule Courier.Stores.Agent do
 
       def put({%Mail.Message{} = message, timestamp, opts}) do
         Agent.update(__MODULE__, fn(messages) -> [{message, timestamp, opts} | messages] end)
-      end
-
-      def delete(%Mail.Message{} = message) do
-        Agent.update(__MODULE__, fn(messages) ->
-          messages
-          |> Enum.find_index(&(message == elem(&1, 0)))
-          |> case do
-            nil -> messages
-            idx -> List.delete_at(messages, idx)
-          end
-        end)
-      end
-
-      def delete([]), do: :ok
-      def delete([%Mail.Message{} = message |  messages]) when is_list(messages) do
-        delete(message)
-        delete(messages)
       end
 
       def clear(),
@@ -46,10 +29,12 @@ defmodule Courier.Stores.Agent do
           |> :calendar.datetime_to_gregorian_seconds()
 
         messages
-        |> Enum.reduce([], fn({message, timestamp, opts}, acc) ->
+        |> Enum.reduce({[], []}, fn({message, timestamp, opts}, {acc, state}) ->
           cond do
-            :calendar.datetime_to_gregorian_seconds(timestamp) <= current_seconds -> [{message, timestamp, opts} | acc]
-            true -> acc
+            :calendar.datetime_to_gregorian_seconds(timestamp) <= current_seconds ->
+              {[{message, timestamp, opts} | acc], state}
+            true ->
+              {acc, [{message, timestamp, opts} | state]}
           end
         end)
       end

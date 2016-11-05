@@ -1,7 +1,7 @@
 defmodule Courier.Scheduler do
   use GenServer
 
-  @timeout :infinity
+  @timeout 5_000
   @pool_size 10
   @interval 1_000
 
@@ -110,7 +110,7 @@ defmodule Courier.Scheduler do
     def handle_call({:deliver, message, message_opts}, _from, [store: _store, adapter: adapter, opts: _opts] = state) do
       adapter.deliver(message, message_opts)
 
-      {:noreply, state}
+      {:reply, :ok, state}
     end
   end
 

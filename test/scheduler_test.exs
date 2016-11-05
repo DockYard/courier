@@ -189,16 +189,19 @@ defmodule Courier.SchedulerTest do
       @scheduler.children(opts)
       |> Supervisor.start_link(strategy: :one_for_all)
 
-    Mail.build()
-    |> Mail.Message.put_body("one")
-    |> @scheduler.deliver(opts)
+    message_1 =
+      Mail.build()
+      |> Mail.Message.put_body("one")
 
-    Mail.build()
-    |> Mail.Message.put_body("two")
-    |> @scheduler.deliver(opts)
+    message_2 =
+      Mail.build()
+      |> Mail.Message.put_body("two")
+
+    @scheduler.deliver(message_1, opts)
+    @scheduler.deliver(message_2, opts)
 
     assert_receive :sent
-    refute_receive :sent
+    refute_received :sent
 
     Supervisor.stop(pid)
   end

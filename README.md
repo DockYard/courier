@@ -18,6 +18,21 @@ defmodule MyApp.Mailer do
 end
 ```
 
+After this we need to add the Courier Supervisor to your tree. For
+example, if you are using in a Phoenix app you can edit `lib/my_app.ex`
+
+```elixir
+def start(_type, _args) do
+  children = [
+    supervisor(MyApp.Repo, []),
+    supervisor(MyApp.Endpoint, []),
+
+    # Mailer Supervisor
+    supervisor(MyApp.Mailer, [])
+  ]
+end
+```
+
 Next set the default adapter in `config/config.exs` or `config/{environment}.exs`:
 
 ```elixir

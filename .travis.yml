@@ -1,8 +1,8 @@
 language: elixir
 elixir:
-  - 1.3.4
+  - 1.4.1
 otp_release:
-  - 18.0
+  - 19.0
 sudo: false # to use faster container based build environment
 cache:
   directories:

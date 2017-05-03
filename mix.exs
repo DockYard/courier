@@ -10,7 +10,7 @@ defmodule Courier.Mixfile do
      docs: [main: "Courier"],
      description: description(),
      package: package(),
-     deps: deps]
+     deps: deps()]
   end
 
   # Configuration for the OTP application

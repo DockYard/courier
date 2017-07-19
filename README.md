@@ -1,8 +1,8 @@
-# Courier
+# Courier [![Build Status](https://secure.travis-ci.org/DockYard/courier.svg?branch=master)](http://travis-ci.org/DockYard/courier)
 
 Mail delivery for Elixir
 
-[![Build Status](https://secure.travis-ci.org/DockYard/courier.svg?branch=master)](http://travis-ci.org/DockYard/courier)
+**[Courier is built and maintained by DockYard, contact us for expert Elixir and Phoenix consulting](https://dockyard.com/phoenix-consulting)**.
 
 Courier is an OTP adapter-based mail delivery system for Elixir applications. It means serious business for sending emails.
 

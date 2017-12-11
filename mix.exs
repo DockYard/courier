@@ -45,6 +45,6 @@ defmodule Courier.Mixfile do
      {:gen_smtp, "~> 0.11.0"},
      {:earmark, "~> 1.0.1", only: :dev},
      {:ex_doc, "~> 0.13.0", only: :dev},
-     {:mail, "~> 0.1.1"}]
+     {:mail, "~> 0.2.0"}]
   end
 end

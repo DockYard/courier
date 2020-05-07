@@ -46,7 +46,7 @@ defmodule Courier.Mixfile do
       {:phoenix, "~> 1.1", only: :test},
       {:phoenix_html, "~> 2.2", only: :test},
       {:poolboy, "~> 1.5.0"},
-      {:gen_smtp, "~> 0.11.0"},
+      {:gen_smtp, "~> 0.15.0"},
       {:earmark, "~> 1.0.1", only: :dev},
       {:ex_doc, "~> 0.13.0", only: :dev},
       {:mail, "~> 0.2.0"}

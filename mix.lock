@@ -1,7 +1,7 @@
 %{
   "earmark": {:hex, :earmark, "1.0.2", "a0b0904d74ecc14da8bd2e6e0248e1a409a2bc91aade75fcf428125603de3853", [:mix], [], "hexpm", "e2d24ab54061603b8dd65bc3d361897ded61f33a4b57044564320a3ac00e8e72"},
   "ex_doc": {:hex, :ex_doc, "0.13.2", "1059a588d2ad3ffab25a0b85c58abf08e437d3e7a9124ac255e1d15cec68ab79", [:mix], [{:earmark, "~> 1.0", [hex: :earmark, repo: "hexpm", optional: false]}], "hexpm", "b2c71148cb42a23e3610b7810b1600d61b10e1a9eb4e8a5db35d398057469528"},
-  "gen_smtp": {:hex, :gen_smtp, "0.11.0", "d90ff2f021fc86cb2a4259b1f2b177ab6e506676265e26454bf5755855adc956", [:rebar3], [], "hexpm", "91df291503e0c0d3d5ddb00ed85f3d8da521a9a0936d141f647bb752f0295f02"},
+  "gen_smtp": {:hex, :gen_smtp, "0.15.0", "9f51960c17769b26833b50df0b96123605a8024738b62db747fece14eb2fbfcc", [:rebar3], [], "hexpm", "29bd14a88030980849c7ed2447b8db6d6c9278a28b11a44cafe41b791205440f"},
   "mail": {:hex, :mail, "0.2.0", "4458b46fd097e4dd1b72f7ec578d35643d32c866ac5e0f154a068b377e5b3111", [:mix], [], "hexpm", "4b77384764bb8452005a6dc70d30f2e0f7f2b137ff46e793307c29563c8074a9"},
   "mime": {:hex, :mime, "1.0.1", "05c393850524767d13a53627df71beeebb016205eb43bfbd92d14d24ec7a1b51", [:mix], [], "hexpm", "8aad5eef6d9d20899918868b10e79fc2dafe72a79102882c2947999c10b30cd9"},
   "phoenix": {:hex, :phoenix, "1.2.1", "6dc592249ab73c67575769765b66ad164ad25d83defa3492dc6ae269bd2a68ab", [:mix], [{:cowboy, "~> 1.0", [hex: :cowboy, repo: "hexpm", optional: true]}, {:phoenix_pubsub, "~> 1.0", [hex: :phoenix_pubsub, repo: "hexpm", optional: false]}, {:plug, "~> 1.1", [hex: :plug, repo: "hexpm", optional: false]}, {:poison, "~> 1.5 or ~> 2.0", [hex: :poison, repo: "hexpm", optional: false]}], "hexpm", "3bdd0166c46035e90ab2fce314f7b46e937a940efacbf71d973c54af9c891f38"},

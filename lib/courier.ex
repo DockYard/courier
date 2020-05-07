@@ -31,7 +31,7 @@ defmodule Courier do
         |> Courier.Scheduler.deliver(opts)
       end
 
-      def init(_), do: :ok
+      def init(_), do: Supervisor.init([], strategy: :one_for_one)
 
       def __adapter__(),
         do: unquote(Macro.escape(adapter))
@@ -45,10 +45,9 @@ defmodule Courier do
 
   @doc false
   def init(config) do
-    import Supervisor.Spec
-
-    Courier.Scheduler.children(config)
-    |> supervise(strategy: :one_for_all)
+    config
+    |> Courier.Scheduler.children()
+    |> Supervisor.init(strategy: :one_for_all)
   end
 
   @doc false

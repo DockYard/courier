@@ -107,7 +107,11 @@ defmodule Courier.Scheduler do
       {:ok, opts}
     end
 
-    def handle_call({:deliver, message, message_opts}, _from, [store: _store, adapter: adapter, opts: _opts] = state) do
+    def handle_call(
+          {:deliver, message, message_opts},
+          _from,
+          [store: _store, adapter: adapter, opts: _opts] = state
+        ) do
       adapter.deliver(message, message_opts)
 
       {:reply, :ok, state}
@@ -132,7 +136,11 @@ defmodule Courier.Scheduler do
     [
       Supervisor.Spec.supervisor(Task.Supervisor, [[name: opts[:task_sup]]]),
       Supervisor.Spec.supervisor(adapter, [opts]),
-      :poolboy.child_spec(opts[:pool_name], pool_opts(pool_name, opts), [store: store, adapter: adapter, opts: opts]),
+      :poolboy.child_spec(opts[:pool_name], pool_opts(pool_name, opts),
+        store: store,
+        adapter: adapter,
+        opts: opts
+      ),
       Supervisor.Spec.worker(store, []),
       Supervisor.Spec.worker(__MODULE__, [opts])
     ]
@@ -163,14 +171,16 @@ defmodule Courier.Scheduler do
   @doc false
   def handle_info(:poll, %{opts: opts} = state) do
     timeout = opts[:delivery_timeout] || @timeout
+
     state =
       store(opts).pop(past: true)
-      |> Enum.reduce(state, fn({message, _timestamp, message_opts}, state) ->
-        %{ref: ref} = Task.Supervisor.async_nolink(opts[:task_sup], fn ->
-          :poolboy.transaction(opts[:pool_name], fn(worker_pid) ->
-            GenServer.call(worker_pid, {:deliver, message, message_opts}, timeout)
+      |> Enum.reduce(state, fn {message, _timestamp, message_opts}, state ->
+        %{ref: ref} =
+          Task.Supervisor.async_nolink(opts[:task_sup], fn ->
+            :poolboy.transaction(opts[:pool_name], fn worker_pid ->
+              GenServer.call(worker_pid, {:deliver, message, message_opts}, timeout)
+            end)
           end)
-        end)
 
         add_message(state, message, ref)
       end)

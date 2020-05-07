@@ -30,7 +30,7 @@ defmodule Courier.Adapters.Test do
   @doc false
   def deliver(%Mail.Message{} = message, opts) do
     case Keyword.fetch(opts, :sent_from) do
-      {:ok, pid} -> send pid, {:delivered, message}
+      {:ok, pid} -> send(pid, {:delivered, message})
       :error -> nil
     end
 

@@ -1,5 +1,6 @@
 defmodule Courier do
   use GenServer
+
   @moduledoc """
   This module is `use`ed by your custom mailer.
 
@@ -23,7 +24,7 @@ defmodule Courier do
       def deliver(%Mail.Message{} = message, opts \\ []) do
         opts =
           Keyword.merge(unquote(Macro.escape(config)), opts)
-          |> Keyword.merge([adapter: __adapter__(), mailer: __MODULE__, sent_from: self()])
+          |> Keyword.merge(adapter: __adapter__(), mailer: __MODULE__, sent_from: self())
 
         message
         |> Mail.Message.put_header(:date, :calendar.universal_time())
@@ -39,7 +40,7 @@ defmodule Courier do
 
   @doc false
   def start_link(mailer, config) do
-    Supervisor.start_link(__MODULE__, config, [name: mailer])
+    Supervisor.start_link(__MODULE__, config, name: mailer)
   end
 
   @doc false

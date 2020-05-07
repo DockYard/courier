@@ -18,11 +18,13 @@ defmodule Courier.Adapters.SMTPBase do
       expected in `[gen_smtp_client](https://github.com/Vagabond/gen_smtp#client-example)`
       """
       def deliver(message, opts)
+
       def deliver(%Mail.Message{} = message, opts) do
         rendered_message =
           message
           |> strip_bcc()
           |> Mail.Renderers.RFC2822.render()
+
         :gen_smtp_client.send_blocking({from(message), to(message), rendered_message}, opts)
       end
 

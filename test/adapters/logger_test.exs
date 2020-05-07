@@ -21,9 +21,10 @@ defmodule Courier.Adapters.LoggerTest do
       |> Mail.put_from("jill@example.com")
       |> Mail.put_text("To fetch a pail of water!")
 
-    output = capture_log(:info, fn ->
-      @adapter.deliver(message, [])
-    end)
+    output =
+      capture_log(:info, fn ->
+        @adapter.deliver(message, [])
+      end)
 
     assert output =~ "Subject: Let's go up the hill!"
     assert output =~ "To: jack@example.com"
@@ -40,9 +41,10 @@ defmodule Courier.Adapters.LoggerTest do
       |> Mail.put_from("jill@example.com")
       |> Mail.put_text("To fetch a pail of water!")
 
-    output = capture_log(:debug, fn ->
-      @adapter.deliver(message, %{level: :debug})
-    end)
+    output =
+      capture_log(:debug, fn ->
+        @adapter.deliver(message, %{level: :debug})
+      end)
 
     assert output =~ "Subject: Let's go up the hill!"
     assert output =~ "[debug]"
@@ -50,6 +52,7 @@ defmodule Courier.Adapters.LoggerTest do
 
   def capture_log(level \\ :debug, fun) do
     Logger.configure(level: level)
+
     capture_io(:user, fn ->
       fun.()
       Logger.flush()

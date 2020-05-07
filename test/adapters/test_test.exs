@@ -89,7 +89,7 @@ defmodule Courier.Adapters.TestTest do
   end
 
   test "deliverying will send a message to the `sent_from` pid" do
-    @adapter.deliver(@message1, [sent_from: self()])
+    @adapter.deliver(@message1, sent_from: self())
 
     assert_receive {:delivered, @message1}
   end

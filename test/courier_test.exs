@@ -7,8 +7,9 @@ defmodule Courier.Test do
 
   defmodule TestAdapter do
     def start_link(_), do: :ignore
+
     def deliver(%Mail.Message{} = _message, opts) do
-      send opts[:pid], :sent
+      send(opts[:pid], :sent)
 
       :ok
     end
@@ -16,9 +17,10 @@ defmodule Courier.Test do
 
   defmodule OptionTestAdapter do
     def start_link(_), do: :ignore
+
     def deliver(%Mail.Message{} = _message, opts) do
       if opts[:success] do
-        send opts[:pid], :sent
+        send(opts[:pid], :sent)
       end
 
       :ok
@@ -27,9 +29,10 @@ defmodule Courier.Test do
 
   defmodule DateTestAdapter do
     def start_link(_), do: :ignore
+
     def deliver(%Mail.Message{} = message, opts) do
       if Mail.Message.get_header(message, :date) do
-        send opts[:pid], :sent
+        send(opts[:pid], :sent)
       end
 
       :ok
@@ -44,17 +47,21 @@ defmodule Courier.Test do
       do: String.upcase(message)
   end
 
-  Application.put_env(:test, Courier.Test.MyMailer, [adapter: TestAdapter])
-  defmodule MyMailer, do: use Courier, otp_app: :test
+  Application.put_env(:test, Courier.Test.MyMailer, adapter: TestAdapter)
+  defmodule MyMailer, do: use(Courier, otp_app: :test)
 
-  Application.put_env(:test, Courier.Test.MyOptionMailer, [adapter: OptionTestAdapter, success: false])
-  defmodule MyOptionMailer, do: use Courier, otp_app: :test
+  Application.put_env(:test, Courier.Test.MyOptionMailer,
+    adapter: OptionTestAdapter,
+    success: false
+  )
 
-  Application.put_env(:test, Courier.Test.MyDateMailer, [adapter: DateTestAdapter])
-  defmodule MyDateMailer, do: use Courier, otp_app: :test
+  defmodule MyOptionMailer, do: use(Courier, otp_app: :test)
+
+  Application.put_env(:test, Courier.Test.MyDateMailer, adapter: DateTestAdapter)
+  defmodule MyDateMailer, do: use(Courier, otp_app: :test)
 
   test "Using Courier: parsing config" do
-    assert MyMailer.__adapter__ == TestAdapter
+    assert MyMailer.__adapter__() == TestAdapter
   end
 
   test "delivering a message delegates to the adapter" do

@@ -10,8 +10,9 @@ defmodule Courier.SchedulerTest do
 
   defmodule Adapter do
     def start_link(_), do: :ignore
+
     def deliver(_message, opts) do
-      send opts[:pid], :sent
+      send(opts[:pid], :sent)
 
       :ok
     end
@@ -19,6 +20,7 @@ defmodule Courier.SchedulerTest do
 
   defmodule BadAdapter do
     def start_link(_), do: :ignore
+
     def deliver(_message, _opts) do
       raise DeliveryException
     end
@@ -26,13 +28,14 @@ defmodule Courier.SchedulerTest do
 
   defmodule OtherAdapter do
     def start_link(_), do: :ignore
+
     def deliver(%Mail.Message{headers: %{"state" => :fail}}, opts) do
-      send opts[:pid], :error
+      send(opts[:pid], :error)
       raise DeliveryException
     end
 
     def deliver(%Mail.Message{body: body}, opts) do
-      send opts[:pid], body
+      send(opts[:pid], body)
 
       :ok
     end

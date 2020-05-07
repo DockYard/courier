@@ -23,7 +23,7 @@ defmodule Courier.Adapters.Agent do
       Delivers the message by storing in an Agent
       """
       def deliver(%Mail.Message{} = message, _opts) do
-        Agent.update(__MODULE__, fn(messages) -> [message | messages] end)
+        Agent.update(__MODULE__, fn messages -> [message | messages] end)
       end
 
       @doc """
@@ -32,14 +32,14 @@ defmodule Courier.Adapters.Agent do
       Returns an empty list if no messages are found
       """
       def messages() do
-        Agent.get(__MODULE__, fn(messages) -> messages end)
+        Agent.get(__MODULE__, fn messages -> messages end)
       end
 
       @doc """
       Clears all messages
       """
       def clear(),
-        do: Agent.update(__MODULE__, fn(_) -> [] end)
+        do: Agent.update(__MODULE__, fn _ -> [] end)
 
       @doc """
       Deletes the specific message
@@ -47,10 +47,10 @@ defmodule Courier.Adapters.Agent do
       Returns the list of remaning messages.
       """
       def delete(message) do
-        Agent.update(__MODULE__, fn(messages) -> List.delete(messages, message) end)
+        Agent.update(__MODULE__, fn messages -> List.delete(messages, message) end)
       end
 
-      defoverridable [deliver: 2, messages: 0, clear: 0, delete: 1]
+      defoverridable deliver: 2, messages: 0, clear: 0, delete: 1
     end
   end
 end

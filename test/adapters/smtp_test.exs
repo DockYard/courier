@@ -9,7 +9,7 @@ defmodule Courier.Adapters.SMTPTest do
       do: {:ok, extensions, state}
 
     def handle_DATA(from, to, data, state) do
-      send get_in(state, [:options, :pid]), {from, to, data}
+      send(get_in(state, [:options, :pid]), {from, to, data})
 
       {:ok, "foobar", state}
     end
@@ -25,7 +25,8 @@ defmodule Courier.Adapters.SMTPTest do
   end
 
   setup do
-    {:ok, _pid} = :gen_smtp_server.start_link(Server, [[sessionoptions: [callbackoptions: [pid: self()]]]])
+    {:ok, _pid} =
+      :gen_smtp_server.start_link(Server, [[sessionoptions: [callbackoptions: [pid: self()]]]])
 
     :ok
   end
@@ -39,7 +40,7 @@ defmodule Courier.Adapters.SMTPTest do
       |> Mail.put_subject("Sending you a test")
       |> Mail.put_text("Hopefully it works!")
 
-    Courier.Adapters.SMTP.deliver(message, [relay: "localhost", port: 2525])
+    Courier.Adapters.SMTP.deliver(message, relay: "localhost", port: 2525)
 
     receive do
       {from, to, data} ->

@@ -9,19 +9,21 @@ defmodule Courier.Storage do
       end
   """
 
-  @callback messages() :: [Mail.Message.t]
-  @callback messages_for(String.t) :: [Mail.Message.t]
-  @callback recipients() :: [String.t]
+  @callback messages() :: [Mail.Message.t()]
+  @callback messages_for(String.t()) :: [Mail.Message.t()]
+  @callback recipients() :: [String.t()]
   @callback clear() :: any
-  @callback delete(Mail.Message.t) :: [Mail.Message.t]
+  @callback delete(Mail.Message.t()) :: [Mail.Message.t()]
 
   defmacro __using__([]) do
     quote do
       @behaviour Courier.Storage
 
       def messages_for(recipient) do
-        Enum.filter messages(),
-          &(Enum.member?(uniq_emails(&1), recipient))
+        Enum.filter(
+          messages(),
+          &Enum.member?(uniq_emails(&1), recipient)
+        )
       end
 
       def recipients do

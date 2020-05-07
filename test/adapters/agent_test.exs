@@ -1,5 +1,5 @@
 defmodule Courier.Adapters.AgentTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: false
 
   defmodule MockAdapter do
     use Courier.Adapters.Agent
